@@ -26,6 +26,11 @@ class SimpleCarousel extends Component {
       children: PropTypes.node,
       className: PropTypes.string,
       style: PropTypes.object,
+      settings: PropTypes.shape({
+        duration: PropTypes.number, // in ms,
+        easing: PropTypes.string, // timing function,
+        delay: PropTypes.number, // in ms,
+      }),
     };
   }
 
@@ -37,6 +42,18 @@ class SimpleCarousel extends Component {
       children: null,
       className: '',
       style: {},
+      settings: SimpleCarousel.SETTINGS,
+    };
+  }
+
+  /**
+   * @type {Object}
+   */
+  static get SETTINGS() {
+    return {
+      duration: 225,
+      easing: 'cubic-bezier(0.0, 0.0, 0.2, 1)',
+      delay: 0,
     };
   }
 
@@ -98,7 +115,8 @@ class SimpleCarousel extends Component {
 
   render() {
     const { slide } = this.state;
-    const { children, className, style, ...props } = this.props;
+    const { children, className, style, settings, ...props } = this.props;
+    const { duration, easing, delay } = { ...SimpleCarousel.SETTINGS, ...settings };
 
     const slides = React.Children.map(children, (child, i) =>
       cloneElement(child, {
@@ -110,6 +128,7 @@ class SimpleCarousel extends Component {
     );
 
     const x = this.currentX;
+    const transition = `transform ${duration}ms ${easing} ${delay}ms`;
 
     return (
       <div
@@ -117,6 +136,7 @@ class SimpleCarousel extends Component {
         className={cx("SimpleCarousel", { [className]: className })}
         style={{
           transform: `translateX(-${x}px)`,
+          transition,
           ...style,
         }}
         {...props}
