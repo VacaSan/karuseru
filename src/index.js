@@ -66,6 +66,33 @@ class SimpleCarousel extends Component {
     return slide * childWidth;
   }
 
+  /**
+   * @type {number}
+   */
+  get currentSlide() {
+    const { slide } = this.state;
+
+    return slide;
+  }
+
+  /**
+   * @type {number}
+   */
+  get length() {
+    const { children } = this.props;
+
+    return React.Children.count(children);
+  }
+
+  /**
+   * @type {number}
+   */
+  get perView() {
+    const { width, childWidth } = this.state;
+
+    return Math.round(width / childWidth);
+  }
+
   componentDidMount() {
     this.layout();
   }
@@ -91,7 +118,7 @@ class SimpleCarousel extends Component {
    */
   goTo = (n) => {
     this.setState({
-      slide: n,
+      slide: Math.max(0, Math.min(n, this.length - this.perView)),
     });
   }
 
