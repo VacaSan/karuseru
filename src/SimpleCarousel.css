@@ -1,0 +1,12 @@
+.SimpleCarousel {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: visible;
+  will-change: transform;
+  transform: translateX(0);
+}
+
+.SimpleCarousel > * {
+  display: inline-block;
+  flex-shrink: 0;
+}
