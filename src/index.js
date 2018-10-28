@@ -95,6 +95,19 @@ class SimpleCarousel extends Component {
 
   componentDidMount() {
     this.layout();
+    window.addEventListener('resize', this.onResize);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.onResize);
+  }
+
+  onResize = () => {
+    // https://css-tricks.com/snippets/jquery/done-resizing-event/
+    clearTimeout(this.resizeTimer);
+    this.resizeTimer = setTimeout(() => {
+      this.layout();
+    }, 250);
   }
 
   /**
