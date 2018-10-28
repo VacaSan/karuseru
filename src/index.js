@@ -33,6 +33,35 @@ class SimpleCarousel extends Component {
     };
   }
 
+  /**
+   * Goes to the specified slide.
+   *
+   * @param {number} n
+   */
+  goTo = (n) => {
+    this.setState({
+      slide: n,
+    });
+  }
+
+  /**
+   * Goes to the next slide.
+   */
+  next = () => {
+    const { slide } = this.state;
+
+    this.goTo(slide + 1);
+  }
+
+  /**
+   * Goes to the previous slide.
+   */
+  prev = () => {
+    const { slide } = this.state;
+
+    this.goTo(slide - 1);
+  }
+
   render() {
     const { slide } = this.state;
     const { children, className, style, ...props } = this.props;
