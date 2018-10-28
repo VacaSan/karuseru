@@ -265,9 +265,9 @@ class SimpleCarousel extends Component {
         ref={this.$root}
         className={cx("SimpleCarousel", { [className]: className })}
         style={{
+          ...style,
           transform: `translateX(-${x}px)`,
           transition,
-          ...style,
         }}
         onMouseDown={this.onStart}
         onTouchStart={this.onStart}
