@@ -11,6 +11,8 @@ class SimpleCarousel extends Component {
     slide: 0,
     width: 0,
     childWidth: 0,
+    screenX: 0,
+    isTouching: false,
   };
 
   $root = createRef();
@@ -99,6 +101,43 @@ class SimpleCarousel extends Component {
     window.removeEventListener('resize', this.onResize);
   }
 
+  /**
+   * mousedown/touchstart event handler.
+   */
+  onStart = (evt) => {
+    evt.preventDefault();
+
+    this.delta = 0;
+    this.startX = evt.pageX || evt.touches[0].pageX;
+    this.addEventListeners();
+    window.requestAnimationFrame(this.update);
+
+    this.setState({
+      isTouching: true,
+    });
+  }
+
+  /**
+   * mousemove/touchmove event handler.
+   */
+  onMove = (evt) => {
+    this.delta = (evt.pageX || evt.touches[0].pageX) - this.startX;
+  }
+
+  /**
+   * mouseup/touchend/touchcancel event handler.
+   */
+  onEnd = () => {
+    this.removeEventListeners();
+
+    this.setState({
+      isTouching: false,
+    });
+  }
+
+  /**
+   * resize event handler. Runs layout after resize event has ended.
+   */
   onResize = () => {
     // https://css-tricks.com/snippets/jquery/done-resizing-event/
     clearTimeout(this.resizeTimer);
@@ -119,6 +158,36 @@ class SimpleCarousel extends Component {
       width,
       childWidth,
     });
+  }
+
+  /**
+   * Updates the state based on the user gesture.
+   */
+  update = () => {
+    const { isTouching, slide, childWidth } = this.state;
+
+    const screenX = this.currentX - this.delta;
+
+    this.setState({
+      screenX,
+    });
+
+    if (isTouching) {
+      window.requestAnimationFrame(this.update);
+      return;
+    }
+
+    let nextSlide = slide;
+    const clearance = 0.25 * childWidth;
+    const slidesMoved = Math.floor(Math.abs(this.delta / childWidth));
+
+    if (this.delta < -clearance) {
+      nextSlide = slide + (1 + slidesMoved);
+    } else if (this.delta > clearance) {
+      nextSlide = slide - (1 + slidesMoved);
+    }
+
+    this.goTo(nextSlide);
   }
 
   /**
@@ -150,8 +219,24 @@ class SimpleCarousel extends Component {
     this.goTo(slide - 1);
   }
 
+  /**
+   * Convinience method for attaching event handlers.
+   */
+  addEventListeners = () => {
+    document.addEventListener('mousemove', this.onMove);
+    document.addEventListener('mouseup', this.onEnd);
+  }
+
+  /**
+   * Convinience method for dettaching event handlers.
+   */
+  removeEventListeners = () => {
+    document.removeEventListener('mousemove', this.onMove);
+    document.removeEventListener('mouseup', this.onEnd);
+  }
+
   render() {
-    const { slide } = this.state;
+    const { slide, screenX, isTouching } = this.state;
     const { children, className, style, settings, ...props } = this.props;
     const { duration, easing, delay } = { ...SimpleCarousel.SETTINGS, ...settings };
 
@@ -164,8 +249,8 @@ class SimpleCarousel extends Component {
       })
     );
 
-    const x = this.currentX;
-    const transition = `transform ${duration}ms ${easing} ${delay}ms`;
+    const x = isTouching ? screenX : this.currentX;
+    const transition = !isTouching ? `transform ${duration}ms ${easing} ${delay}ms` : '';
 
     return (
       <div
@@ -176,6 +261,7 @@ class SimpleCarousel extends Component {
           transition,
           ...style,
         }}
+        onMouseDown={this.onStart}
         {...props}
       >
         {slides}
