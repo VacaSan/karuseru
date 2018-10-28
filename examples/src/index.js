@@ -17,5 +17,4 @@ const App = () => (
   </div>
 );
 
-/* eslint-disable */
 render(<App />, document.getElementById("root"));
