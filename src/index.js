@@ -105,8 +105,6 @@ class SimpleCarousel extends Component {
    * mousedown/touchstart event handler.
    */
   onStart = (evt) => {
-    evt.preventDefault();
-
     this.delta = 0;
     this.startX = evt.pageX || evt.touches[0].pageX;
     this.addEventListeners();
@@ -223,16 +221,26 @@ class SimpleCarousel extends Component {
    * Convinience method for attaching event handlers.
    */
   addEventListeners = () => {
+    // mouse events
     document.addEventListener('mousemove', this.onMove);
     document.addEventListener('mouseup', this.onEnd);
+    // touch events
+    document.addEventListener('touchmove', this.onMove);
+    document.addEventListener('touchend', this.onEnd);
+    document.addEventListener('touchcancel', this.onEnd);
   }
 
   /**
    * Convinience method for dettaching event handlers.
    */
   removeEventListeners = () => {
+    // mouse events
     document.removeEventListener('mousemove', this.onMove);
     document.removeEventListener('mouseup', this.onEnd);
+    // touch events
+    document.removeEventListener('touchmove', this.onMove);
+    document.removeEventListener('touchend', this.onEnd);
+    document.removeEventListener('touchcancel', this.onEnd);
   }
 
   render() {
@@ -262,6 +270,7 @@ class SimpleCarousel extends Component {
           ...style,
         }}
         onMouseDown={this.onStart}
+        onTouchStart={this.onStart}
         {...props}
       >
         {slides}

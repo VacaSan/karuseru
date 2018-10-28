@@ -18,6 +18,10 @@ body {
   line-height: 1;
 }
 
+#root {
+  overflow: hidden;
+}
+
 .slide {
   position: relative;
   width: 100%;
