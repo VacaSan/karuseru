@@ -32,11 +32,10 @@ class SimpleCarousel extends Component {
 
     return (
       <div
-        className={cx(SimpleCarousel, { [className]: className })}
+        className={cx("SimpleCarousel", { [className]: className })}
         style={style}
         {...props}
       >
-        hello, world
       </div>
     );
   }
