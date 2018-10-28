@@ -7,16 +7,13 @@ import './SimpleCarousel.css';
  * SimpleCarousel component.
  */
 class SimpleCarousel extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      slide: 0,
-      width: 0,
-      childWidth: 0,
-    };
+  state = {
+    slide: 0,
+    width: 0,
+    childWidth: 0,
+  };
 
-    this.$root = createRef();
-  }
+  $root = createRef();
 
   /**
    * @type {object}
