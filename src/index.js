@@ -25,6 +25,7 @@ class SimpleCarousel extends Component {
       children: PropTypes.node,
       className: PropTypes.string,
       style: PropTypes.object,
+      onChange: PropTypes.func,
       settings: PropTypes.shape({
         duration: PropTypes.number, // in ms,
         easing: PropTypes.string, // timing function,
@@ -41,6 +42,7 @@ class SimpleCarousel extends Component {
       children: null,
       className: '',
       style: {},
+      onChange: () => { },
       settings: SimpleCarousel.SETTINGS,
     };
   }
@@ -194,9 +196,11 @@ class SimpleCarousel extends Component {
    * @param {number} n
    */
   goTo = (n) => {
+    const { onChange } = this.props;
+
     this.setState({
       slide: Math.max(0, Math.min(n, this.length - this.perView)),
-    });
+    }, () => onChange(this));
   }
 
   /**
