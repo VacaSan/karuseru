@@ -3,6 +3,12 @@ import { render } from "react-dom";
 import SimpleCarousel from "../../src";
 import "./styles.css";
 
+const imgs = [
+  'https://images.pexels.com/photos/5439/earth-space.jpg?auto=compress&cs=tinysrgb&dpr=2&h=350',
+  'https://images.pexels.com/photos/1434608/pexels-photo-1434608.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=350',
+  'https://images.pexels.com/photos/733475/pexels-photo-733475.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=350',
+];
+
 class App extends Component {
   carousel = createRef();
 
@@ -21,11 +27,22 @@ class App extends Component {
         maxWidth: 640,
         margin: '0 auto',
       }}>
-        <SimpleCarousel ref={this.carousel}>
-          {[1, 2, 3].map((a) => (
-            <div key={a} className="slide">Slide {a}</div>
-          ))}
-        </SimpleCarousel>
+        <div className="wrap">
+          <SimpleCarousel ref={this.carousel}>
+            {imgs.map((src) => (
+              <div key={src} className="slide">
+                <div className="card">
+                  <div className="card_media img">
+                    <img src={src} alt="space stuff" draggable="false" />
+                  </div>
+                  <div className="card_body">
+                    <h2>space stuff</h2>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </SimpleCarousel>
+        </div>
         <div>
           <button onClick={this.prev}>&lt;</button>
           <button onClick={this.next}>&gt;</button>
