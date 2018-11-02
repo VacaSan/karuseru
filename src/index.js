@@ -270,7 +270,7 @@ class SimpleCarousel extends Component {
         className={cx("SimpleCarousel", { [className]: className })}
         style={{
           ...style,
-          transform: `translateX(-${x}px)`,
+          transform: `translateX(${-x}px)`,
           transition,
         }}
         onMouseDown={this.onStart}
