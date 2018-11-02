@@ -8,7 +8,6 @@ import './SimpleCarousel.css';
  */
 class SimpleCarousel extends Component {
   state = {
-    slide: 0,
     width: 0,
     childWidth: 0,
     screenX: 0,
@@ -23,9 +22,10 @@ class SimpleCarousel extends Component {
   static get propTypes() {
     return {
       children: PropTypes.node,
+      slide: PropTypes.number,
+      onChange: PropTypes.func,
       className: PropTypes.string,
       style: PropTypes.object,
-      onChange: PropTypes.func,
       settings: PropTypes.shape({
         duration: PropTypes.number, // in ms,
         easing: PropTypes.string, // timing function,
@@ -40,9 +40,10 @@ class SimpleCarousel extends Component {
   static get defaultProps() {
     return {
       children: null,
+      slide: 0,
+      onChange: () => { },
       className: '',
       style: {},
-      onChange: () => { },
       settings: SimpleCarousel.SETTINGS,
     };
   }
@@ -62,18 +63,10 @@ class SimpleCarousel extends Component {
    * @type {number}
    */
   get currentX() {
-    const { slide, childWidth } = this.state;
+    const { childWidth } = this.state;
+    const { slide } = this.props;
 
     return slide * childWidth;
-  }
-
-  /**
-   * @type {number}
-   */
-  get currentSlide() {
-    const { slide } = this.state;
-
-    return slide;
   }
 
   /**
@@ -164,7 +157,8 @@ class SimpleCarousel extends Component {
    * Updates the state based on the user gesture.
    */
   update = () => {
-    const { isTouching, slide, childWidth } = this.state;
+    const { isTouching, childWidth } = this.state;
+    const { slide } = this.props;
 
     const screenX = this.currentX - this.delta;
 
@@ -198,16 +192,15 @@ class SimpleCarousel extends Component {
   goTo = (n) => {
     const { onChange } = this.props;
 
-    this.setState({
-      slide: Math.max(0, Math.min(n, this.length - this.perView)),
-    }, () => onChange(this));
+    const slide = Math.max(0, Math.min(n, this.length - this.perView));
+    onChange(slide);
   }
 
   /**
    * Goes to the next slide.
    */
   next = () => {
-    const { slide } = this.state;
+    const { slide } = this.props;
 
     this.goTo(slide + 1);
   }
@@ -216,7 +209,7 @@ class SimpleCarousel extends Component {
    * Goes to the previous slide.
    */
   prev = () => {
-    const { slide } = this.state;
+    const { slide } = this.props;
 
     this.goTo(slide - 1);
   }
@@ -248,8 +241,8 @@ class SimpleCarousel extends Component {
   }
 
   render() {
-    const { slide, screenX, isTouching } = this.state;
-    const { children, className, style, settings, ...props } = this.props;
+    const { screenX, isTouching } = this.state;
+    const { children, slide, className, style, settings, ...props } = this.props;
     const { duration, easing, delay } = { ...SimpleCarousel.SETTINGS, ...settings };
 
     const slides = React.Children.map(children, (child, i) =>

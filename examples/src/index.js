@@ -12,6 +12,10 @@ const imgs = [
 class App extends Component {
   carousel = createRef();
 
+  state = {
+    slide: 0,
+  };
+
   next = () => {
     this.carousel.current.next();
   }
@@ -20,7 +24,13 @@ class App extends Component {
     this.carousel.current.prev();
   }
 
+  onChange = (slide) => {
+    this.setState({ slide });
+  }
+
   render() {
+    const { slide } = this.state;
+
     return (
       <div style={{
         width: '100%',
@@ -28,7 +38,7 @@ class App extends Component {
         margin: '0 auto',
       }}>
         <div className="wrap">
-          <SimpleCarousel ref={this.carousel}>
+          <SimpleCarousel ref={this.carousel} slide={slide} onChange={this.onChange}>
             {imgs.map((src) => (
               <div key={src} className="slide">
                 <div className="card">
