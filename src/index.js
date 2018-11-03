@@ -84,11 +84,18 @@ class SimpleCarousel extends Component {
   get perView() {
     const { width, childWidth } = this.state;
 
-    return Math.round(width / childWidth);
+    return Math.round(width / childWidth) || 0;
   }
 
   componentDidMount() {
-    this.layout();
+    const { slide } = this.props;
+
+    // NOTE: Will caouse one extra initial render call. Neccessary for
+    // clamping the `slide` prop.
+    this.layout(() => {
+      this.goTo(slide);
+    });
+
     window.addEventListener('resize', this.onResize);
   }
 
@@ -141,8 +148,10 @@ class SimpleCarousel extends Component {
 
   /**
    * Recomputes the dimensions and re-lays out the component.
+   *
+   * @param {Function} [callback] Callback to run after the layout calculations.
    */
-  layout = () => {
+  layout = (callback) => {
     const $root = this.$root.current;
     const { width } = $root.getBoundingClientRect();
     const { width: childWidth } = $root.firstElementChild.getBoundingClientRect();
@@ -150,7 +159,7 @@ class SimpleCarousel extends Component {
     this.setState({
       width,
       childWidth,
-    });
+    }, callback);
   }
 
   /**
