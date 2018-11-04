@@ -10,6 +10,7 @@ import './SimpleCarousel.css';
 class SimpleCarousel extends Component {
   state = {
     width: 0,
+    totalWidth: 0,
     childrenWidths: [],
     delta: 0,
     isTouching: false,
@@ -64,17 +65,29 @@ class SimpleCarousel extends Component {
    * @type {number}
    */
   get currentX() {
-    const { childrenWidths, delta, width } = this.state;
+    const { childrenWidths, delta, width, totalWidth } = this.state;
     const { slide } = this.props;
-    let currentX = childrenWidths.slice(0, slide).reduce(sum, 0) - delta;
 
+    let currentX = childrenWidths.slice(0, slide).reduce(sum, 0) - delta;
     const lastSlide = childrenWidths.length - 1;
+    const upperBound = totalWidth - width;
+    const lowerBound = 0;
+
+    // Adjust right alignment.
     if (slide === lastSlide) {
       const left = width - childrenWidths[lastSlide];
-      currentX -= left;
+      currentX = currentX - left;
     }
 
-    // TODO: Clamp the value
+    // Add resistance if over/under the extremes.
+    if (currentX > upperBound) {
+      const overBy = currentX - upperBound;
+      currentX = upperBound + Math.sqrt(overBy * 10);
+    } else if (currentX < lowerBound) {
+      const overBy = Math.abs(currentX);
+      currentX = lowerBound - Math.sqrt(overBy * 10);
+    }
+
     return currentX;
   }
 
@@ -165,8 +178,11 @@ class SimpleCarousel extends Component {
       childrenWidths.push(width);
     }
 
+    const totalWidth = childrenWidths.reduce(sum, 0);
+
     this.setState({
       width,
+      totalWidth,
       childrenWidths,
     }, callback);
   }
@@ -281,7 +297,9 @@ class SimpleCarousel extends Component {
       })
     );
 
-    const transition = !isTouching ? `transform ${duration}ms ${easing} ${delay}ms` : '';
+    const transition = !isTouching
+      ? `transform ${duration}ms ${easing} ${delay}ms`
+      : '';
 
     return (
       <div
