@@ -69,12 +69,21 @@ class SimpleCarousel extends Component {
     let currentX = childrenWidths.slice(0, slide).reduce(sum, 0) - delta;
 
     const lastSlide = childrenWidths.length - 1;
+    const left = width - childrenWidths[lastSlide];
+    const limit = childrenWidths.reduce(sum, 0) - width;
+
     if (slide === lastSlide) {
-      const left = width - childrenWidths[lastSlide];
-      currentX -= left;
+      currentX = currentX - left;
     }
 
-    // TODO: Clamp the value
+    if (currentX > limit) {
+      let over = currentX - limit;
+      currentX = limit + Math.sqrt(over * 10);
+    } else if (currentX < 0) {
+      let over = Math.abs(currentX);
+      currentX = 0 - Math.sqrt(over * 10);
+    }
+
     return currentX;
   }
 
