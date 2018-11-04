@@ -1,7 +1,7 @@
 import React, { Component, createRef, cloneElement } from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
-import { sum } from './utils';
+import { sum, clamp } from './utils';
 import './SimpleCarousel.css';
 
 /**
@@ -205,8 +205,8 @@ class SimpleCarousel extends Component {
    */
   goTo = (n) => {
     const { onChange } = this.props;
-    // TODO: Extract `clamp` utility function
-    const slide = Math.max(0, Math.min(n, this.length - 1));
+
+    const slide = clamp(n, 0, this.length - 1);
     onChange(slide);
   }
 
