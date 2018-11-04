@@ -154,10 +154,16 @@ class SimpleCarousel extends Component {
   layout = (callback) => {
     const $root = this.$root.current;
     const { width } = $root.getBoundingClientRect();
-    // TODO: Install polyfill
-    const childrenWidths = Array.from($root.children, (child) => (
-      child.getBoundingClientRect().width
-    ));
+
+    // Using for loop over Array.from removes the need for the polyfill to be
+    // able to support IE11.
+    let childrenWidths = [];
+    const L = $root.children.length;
+    for (let i = 0; i < L; i++) {
+      const child = $root.children[i];
+      const { width } = child.getBoundingClientRect();
+      childrenWidths.push(width);
+    }
 
     this.setState({
       width,
