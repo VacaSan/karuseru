@@ -64,11 +64,18 @@ class SimpleCarousel extends Component {
    * @type {number}
    */
   get currentX() {
-    const { childrenWidths, delta } = this.state;
+    const { childrenWidths, delta, width } = this.state;
     const { slide } = this.props;
+    let currentX = childrenWidths.slice(0, slide).reduce(sum, 0) - delta;
+
+    const lastSlide = childrenWidths.length - 1;
+    if (slide === lastSlide) {
+      const left = width - childrenWidths[lastSlide];
+      currentX -= left;
+    }
 
     // TODO: Clamp the value
-    return childrenWidths.slice(0, slide).reduce(sum, 0) - delta;
+    return currentX;
   }
 
   /**
