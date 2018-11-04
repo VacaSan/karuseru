@@ -1,7 +1,6 @@
 import React, { Component, createRef, cloneElement } from 'react';
 import PropTypes from 'prop-types';
-import cx from 'classnames';
-import { sum, clamp } from './utils';
+import { sum, clamp, classnames } from './utils';
 import './SimpleCarousel.css';
 
 /**
@@ -290,7 +289,7 @@ class SimpleCarousel extends Component {
 
     const slides = React.Children.map(children, (child, i) =>
       cloneElement(child, {
-        className: cx({
+        className: classnames({
           [child.props.className]: child.props.className,
           "active": i === slide,
         })
@@ -304,7 +303,7 @@ class SimpleCarousel extends Component {
     return (
       <div
         ref={this.$root}
-        className={cx("SimpleCarousel", { [className]: className })}
+        className={classnames({ SimpleCarousel: true, [className]: className })}
         style={{
           ...style,
           transform: `translateX(${-this.currentX}px)`,
