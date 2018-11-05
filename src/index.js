@@ -116,9 +116,22 @@ class SimpleCarousel extends Component {
   }
 
   /**
+   * click event handler.
+   */
+  onClick = (evt) => {
+    const { delta } = this.state;
+
+    if (delta !== 0) {
+      evt.preventDefault();
+    }
+  }
+
+  /**
    * mousedown/touchstart event handler.
    */
   onStart = (evt) => {
+    evt.preventDefault();
+
     this._delta = 0;
     this.startX = evt.pageX || evt.touches[0].pageX;
     this.addEventListeners();
@@ -311,6 +324,7 @@ class SimpleCarousel extends Component {
         }}
         onMouseDown={this.onStart}
         onTouchStart={this.onStart}
+        onClick={this.onClick}
         {...props}
       >
         {slides}
