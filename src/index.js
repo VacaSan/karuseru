@@ -305,6 +305,8 @@ class SimpleCarousel extends Component {
         className: classnames({
           [child.props.className]: child.props.className,
           "active": i === slide,
+          "prev": i === slide - 1,
+          "next": i === slide + 1,
         })
       })
     );
