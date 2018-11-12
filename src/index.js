@@ -1,6 +1,6 @@
 import React, { Component, createRef, cloneElement } from 'react';
 import PropTypes from 'prop-types';
-import { sum, clamp, classnames } from './utils';
+import { sum, clamp, classnames, map } from './utils';
 import './SimpleCarousel.css';
 
 /**
@@ -180,15 +180,9 @@ class SimpleCarousel extends Component {
     const $root = this.$root.current;
     const { width } = $root.getBoundingClientRect();
 
-    // Using for loop over Array.from removes the need for the polyfill to be
-    // able to support IE11.
-    let childrenWidths = [];
-    const L = $root.children.length;
-    for (let i = 0; i < L; i++) {
-      const child = $root.children[i];
-      const { width } = child.getBoundingClientRect();
-      childrenWidths.push(width);
-    }
+    const childrenWidths = map($root.children, (child) => {
+      return child.getBoundingClientRect().width;
+    });
 
     const totalWidth = childrenWidths.reduce(sum, 0);
 

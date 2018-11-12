@@ -28,3 +28,22 @@ export const clamp = (value, lower, upper) => {
 export const classnames = (obj) => {
   return Object.keys(obj).filter(name => obj[name]).join(' ');
 };
+
+/**
+ * Creates a new array with the results of calling a provided function
+ * on every element in the given array.
+ *
+ * @param {any[]} arr array to map over.
+ * @param {Function} callback Function that produces an element of the new Array.
+ * @return {any[]} A new array with each element being the result of the callback function.
+ */
+export const map = (arr, callback) => {
+  let res = [];
+
+  const L = arr.length;
+  for (let i = 0; i < L; i++) {
+    res.push(callback(arr[i], i));
+  }
+
+  return res;
+};
