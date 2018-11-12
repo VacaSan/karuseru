@@ -1,6 +1,6 @@
 import React, { Component, createRef } from "react";
 import { render } from "react-dom";
-import SimpleCarousel from "../../src";
+import Karuseru from "../../src";
 import "./styles.css";
 
 const imgs = [
@@ -44,7 +44,7 @@ class App extends Component {
         margin: '0 auto',
       }}>
         <div className="wrap">
-          <SimpleCarousel ref={this.carousel} slide={slide} onChange={this.onChange}>
+          <Karuseru ref={this.carousel} slide={slide} onChange={this.onChange}>
             {imgs.map((src) => (
               <div key={src} className="slide">
                 <div className="card">
@@ -57,7 +57,7 @@ class App extends Component {
                 </div>
               </div>
             ))}
-          </SimpleCarousel>
+          </Karuseru>
         </div>
         <div>
           <button onClick={this.prev} disabled={!hasPrev}>&lt;</button>
