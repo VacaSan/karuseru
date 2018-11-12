@@ -1,4 +1,4 @@
-.SimpleCarousel {
+.Karuseru {
   display: flex;
   flex-wrap: nowrap;
   overflow-x: visible;
@@ -6,7 +6,7 @@
   transform: translateX(0);
 }
 
-.SimpleCarousel > * {
+.Karuseru > * {
   display: inline-block;
   flex-shrink: 0;
 }

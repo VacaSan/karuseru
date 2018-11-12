@@ -1,12 +1,12 @@
 import React, { Component, createRef, cloneElement } from 'react';
 import PropTypes from 'prop-types';
 import { sum, clamp, classnames, map } from './utils';
-import './SimpleCarousel.css';
+import './Karuseru.css';
 
 /**
- * SimpleCarousel component.
+ * Karuseru: a simple react carousel component.
  */
-class SimpleCarousel extends Component {
+class Karuseru extends Component {
   state = {
     width: 0,
     totalWidth: 0,
@@ -42,7 +42,7 @@ class SimpleCarousel extends Component {
     return {
       className: '',
       style: {},
-      settings: SimpleCarousel.SETTINGS,
+      settings: Karuseru.SETTINGS,
     };
   }
 
@@ -284,7 +284,7 @@ class SimpleCarousel extends Component {
   render() {
     const { isTouching } = this.state;
     const { children, slide, className, style, settings, ...props } = this.props;
-    const { duration, easing, delay } = { ...SimpleCarousel.SETTINGS, ...settings };
+    const { duration, easing, delay } = { ...Karuseru.SETTINGS, ...settings };
 
     const slides = React.Children.map(children, (child, i) =>
       cloneElement(child, {
@@ -304,7 +304,7 @@ class SimpleCarousel extends Component {
     return (
       <div
         ref={this.$root}
-        className={classnames({ SimpleCarousel: true, [className]: className })}
+        className={classnames({ Karuseru: true, [className]: className })}
         style={{
           ...style,
           transform: `translateX(${-this.currentX}px)`,
@@ -321,4 +321,4 @@ class SimpleCarousel extends Component {
   }
 }
 
-export default SimpleCarousel;
+export default Karuseru;

@@ -1,13 +1,15 @@
-# React Slide Show
+# Karuseru
+
+A simple react carousel component.
 
 ## Demo
 
-https://vacasan.github.io/react-slide-show/
+https://vacasan.github.io/karuseru/
 
 ## Instalation
 
 ```sh
-npm install --save react-slide-show
+npm install --save karuseru
 ```
 
 ## Usage
@@ -18,7 +20,7 @@ Carousel with slides only.
 
 ```js
 import React, { Component } from 'react';
-import SimpleCarousel from 'react-slide-show';
+import Karuseru from 'karuseru';
 
 class Carousel extends Component {
   constructor(props) {
@@ -35,13 +37,13 @@ class Carousel extends Component {
 
   render() {
     return (
-      <SimpleCarousel
+      <Karuseru
         slide={this.state.slide}
         onChange={this.onChange}
       >
         <div>hello</div>
         <div>world</div>
-      </SimpleCarousel>
+      </Karuseru>
     );
   }
 }
@@ -54,7 +56,7 @@ Adding in the previous and next controls:
 ```js
 
 import React, { Component } from 'react';
-import SimpleCarousel from 'react-slide-show';
+import Karuseru from 'karuseru';
 
 class CarouselWithControls extends Component {
   constructor(props) {
@@ -84,13 +86,13 @@ class CarouselWithControls extends Component {
   render() {
     return (
       <div>
-        <SimpleCarousel
+        <Karuseru
           ref={this.carousel}
           slide={slide}
           onChange={this.onChange}
         >
           {[1, 2, 3, 4].map((n) => <div key={n}>{n}</div>)}
-        </SimpleCarousel>
+        </Karuseru>
         <button onClick={this.prev} disabled={!hasPrev}>&lt;</button>
         <button onClick={this.next} disabled={!hasNext}>&gt;</button>
       </div>
