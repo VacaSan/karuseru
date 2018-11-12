@@ -67,16 +67,10 @@ class SimpleCarousel extends Component {
     const { childrenWidths, delta, width, totalWidth } = this.state;
     const { slide } = this.props;
 
-    let currentX = childrenWidths.slice(0, slide).reduce(sum, 0) - delta;
-    const lastSlide = childrenWidths.length - 1;
-    const upperBound = totalWidth - width;
+    const upperBound = Math.max(totalWidth, width) - width;
     const lowerBound = 0;
-
-    // Adjust right alignment.
-    if (slide === lastSlide) {
-      const left = width - childrenWidths[lastSlide];
-      currentX = currentX - left;
-    }
+    const slideX = childrenWidths.slice(0, slide).reduce(sum, 0);
+    let currentX = clamp(slideX, lowerBound, upperBound) - delta;
 
     // Add resistance if over/under the extremes.
     if (currentX > upperBound) {
