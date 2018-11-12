@@ -234,9 +234,10 @@ class SimpleCarousel extends Component {
    */
   goTo = (n) => {
     const { onChange } = this.props;
+    const length = this.length;
 
     const slide = clamp(n, 0, this.length - 1);
-    onChange(slide);
+    onChange({ slide, length });
   }
 
   /**

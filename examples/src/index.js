@@ -14,6 +14,8 @@ class App extends Component {
 
   state = {
     slide: 0,
+    hasNext: true,
+    hasPrev: false,
   };
 
   next = () => {
@@ -24,12 +26,16 @@ class App extends Component {
     this.carousel.current.prev();
   }
 
-  onChange = (slide) => {
-    this.setState({ slide });
+  onChange = ({ slide, length }) => {
+    this.setState({
+      slide,
+      hasNext: slide < length - 1,
+      hasPrev: slide > 0,
+    });
   }
 
   render() {
-    const { slide } = this.state;
+    const { slide, hasNext, hasPrev } = this.state;
 
     return (
       <div style={{
@@ -54,8 +60,8 @@ class App extends Component {
           </SimpleCarousel>
         </div>
         <div>
-          <button onClick={this.prev}>&lt;</button>
-          <button onClick={this.next}>&gt;</button>
+          <button onClick={this.prev} disabled={!hasPrev}>&lt;</button>
+          <button onClick={this.next} disabled={!hasNext}>&gt;</button>
         </div>
       </div>
     );
