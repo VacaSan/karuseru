@@ -22,9 +22,9 @@ class SimpleCarousel extends Component {
    */
   static get propTypes() {
     return {
-      children: PropTypes.node,
-      slide: PropTypes.number,
-      onChange: PropTypes.func,
+      children: PropTypes.node.isRequired,
+      slide: PropTypes.number.isRequired,
+      onChange: PropTypes.func.isRequired,
       className: PropTypes.string,
       style: PropTypes.object,
       settings: PropTypes.shape({
@@ -40,9 +40,6 @@ class SimpleCarousel extends Component {
    */
   static get defaultProps() {
     return {
-      children: null,
-      slide: 0,
-      onChange: () => { },
       className: '',
       style: {},
       settings: SimpleCarousel.SETTINGS,
