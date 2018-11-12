@@ -1,13 +1,13 @@
-# React Simple Carousel
+# React Slide Show
 
 ## Demo
 
-https://vacasan.github.io/react-simple-carousel/
+https://vacasan.github.io/react-slide-show/
 
 ## Instalation
 
 ```sh
-npm install --save react-simple-carousel
+npm install --save react-slide-show
 ```
 
 ## Usage
@@ -18,7 +18,7 @@ Carousel with slides only.
 
 ```js
 import React, { Component } from 'react';
-import SimpleCarousel from 'react-simple-carousel';
+import SimpleCarousel from 'react-slide-show';
 
 class Carousel extends Component {
   constructor(props) {
@@ -54,7 +54,7 @@ Adding in the previous and next controls:
 ```js
 
 import React, { Component } from 'react';
-import SimpleCarousel from 'react-simple-carousel';
+import SimpleCarousel from 'react-slide-show';
 
 class CarouselWithControls extends Component {
   constructor(props) {

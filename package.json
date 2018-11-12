@@ -1,11 +1,14 @@
 {
-  "name": "react-simple-carousel",
+  "name": "react-slide-show",
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
+  "keywords": [
+    "react", "component", "carousel", "responsive", "simple"
+  ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/VacaSan/react-simple-carousel.git"
+    "url": "https://github.com/VacaSan/react-slide-show.git"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
