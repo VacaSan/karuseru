@@ -1,6 +1,6 @@
 import React, { Component, createRef, cloneElement } from 'react';
 import PropTypes from 'prop-types';
-import cx from 'classnames';
+import { sum, clamp, classnames, map } from './utils';
 import './SimpleCarousel.css';
 
 /**
@@ -9,8 +9,9 @@ import './SimpleCarousel.css';
 class SimpleCarousel extends Component {
   state = {
     width: 0,
-    childWidth: 0,
-    screenX: 0,
+    totalWidth: 0,
+    childrenWidths: [],
+    delta: 0,
     isTouching: false,
   };
 
@@ -21,9 +22,9 @@ class SimpleCarousel extends Component {
    */
   static get propTypes() {
     return {
-      children: PropTypes.node,
-      slide: PropTypes.number,
-      onChange: PropTypes.func,
+      children: PropTypes.node.isRequired,
+      slide: PropTypes.number.isRequired,
+      onChange: PropTypes.func.isRequired,
       className: PropTypes.string,
       style: PropTypes.object,
       settings: PropTypes.shape({
@@ -39,9 +40,6 @@ class SimpleCarousel extends Component {
    */
   static get defaultProps() {
     return {
-      children: null,
-      slide: 0,
-      onChange: () => { },
       className: '',
       style: {},
       settings: SimpleCarousel.SETTINGS,
@@ -63,10 +61,24 @@ class SimpleCarousel extends Component {
    * @type {number}
    */
   get currentX() {
-    const { childWidth } = this.state;
+    const { childrenWidths, delta, width, totalWidth } = this.state;
     const { slide } = this.props;
 
-    return slide * childWidth;
+    const upperBound = Math.max(totalWidth, width) - width;
+    const lowerBound = 0;
+    const slideX = childrenWidths.slice(0, slide).reduce(sum, 0);
+    let currentX = clamp(slideX, lowerBound, upperBound) - delta;
+
+    // Add resistance if over/under the extremes.
+    if (currentX > upperBound) {
+      const overBy = currentX - upperBound;
+      currentX = upperBound + Math.sqrt(overBy * 10);
+    } else if (currentX < lowerBound) {
+      const overBy = Math.abs(currentX);
+      currentX = lowerBound - Math.sqrt(overBy * 10);
+    }
+
+    return currentX;
   }
 
   /**
@@ -76,15 +88,6 @@ class SimpleCarousel extends Component {
     const { children } = this.props;
 
     return React.Children.count(children);
-  }
-
-  /**
-   * @type {number}
-   */
-  get perView() {
-    const { width, childWidth } = this.state;
-
-    return Math.round(width / childWidth) || 0;
   }
 
   componentDidMount() {
@@ -104,10 +107,23 @@ class SimpleCarousel extends Component {
   }
 
   /**
+   * click event handler.
+   */
+  onClick = (evt) => {
+    const { delta } = this.state;
+
+    if (delta !== 0) {
+      evt.preventDefault();
+    }
+  }
+
+  /**
    * mousedown/touchstart event handler.
    */
   onStart = (evt) => {
-    this.delta = 0;
+    evt.preventDefault();
+
+    this._delta = 0;
     this.startX = evt.pageX || evt.touches[0].pageX;
     this.addEventListeners();
     window.requestAnimationFrame(this.update);
@@ -121,7 +137,7 @@ class SimpleCarousel extends Component {
    * mousemove/touchmove event handler.
    */
   onMove = (evt) => {
-    this.delta = (evt.pageX || evt.touches[0].pageX) - this.startX;
+    this._delta = (evt.pageX || evt.touches[0].pageX) - this.startX;
   }
 
   /**
@@ -154,11 +170,17 @@ class SimpleCarousel extends Component {
   layout = (callback) => {
     const $root = this.$root.current;
     const { width } = $root.getBoundingClientRect();
-    const { width: childWidth } = $root.firstElementChild.getBoundingClientRect();
+
+    const childrenWidths = map($root.children, (child) => {
+      return child.getBoundingClientRect().width;
+    });
+
+    const totalWidth = childrenWidths.reduce(sum, 0);
 
     this.setState({
       width,
-      childWidth,
+      totalWidth,
+      childrenWidths,
     }, callback);
   }
 
@@ -166,13 +188,11 @@ class SimpleCarousel extends Component {
    * Updates the state based on the user gesture.
    */
   update = () => {
-    const { isTouching, childWidth } = this.state;
+    const { isTouching, childrenWidths } = this.state;
     const { slide } = this.props;
 
-    const screenX = this.currentX - this.delta;
-
     this.setState({
-      screenX,
+      delta: isTouching ? this._delta : 0,
     });
 
     if (isTouching) {
@@ -181,13 +201,24 @@ class SimpleCarousel extends Component {
     }
 
     let nextSlide = slide;
-    const clearance = 0.25 * childWidth;
-    const slidesMoved = Math.floor(Math.abs(this.delta / childWidth));
+    const clearance = childrenWidths[slide] * 0.25;
 
-    if (this.delta < -clearance) {
-      nextSlide = slide + (1 + slidesMoved);
-    } else if (this.delta > clearance) {
-      nextSlide = slide - (1 + slidesMoved);
+    const list = this._delta < 0
+      ? childrenWidths.slice(slide)
+      : childrenWidths.slice(0, slide);
+
+    let x = 0,
+        moved = 0,
+        child = list[moved];
+    while (Math.abs(this._delta) > (x + child * 0.25)) {
+      x += child;
+      moved++;
+    }
+
+    if (this._delta < -clearance) {
+      nextSlide = slide + moved;
+    } else if (this._delta > clearance) {
+      nextSlide = slide - moved;
     }
 
     this.goTo(nextSlide);
@@ -200,9 +231,10 @@ class SimpleCarousel extends Component {
    */
   goTo = (n) => {
     const { onChange } = this.props;
+    const length = this.length;
 
-    const slide = Math.max(0, Math.min(n, this.length - this.perView));
-    onChange(slide);
+    const slide = clamp(n, 0, this.length - 1);
+    onChange({ slide, length });
   }
 
   /**
@@ -250,33 +282,37 @@ class SimpleCarousel extends Component {
   }
 
   render() {
-    const { screenX, isTouching } = this.state;
+    const { isTouching } = this.state;
     const { children, slide, className, style, settings, ...props } = this.props;
     const { duration, easing, delay } = { ...SimpleCarousel.SETTINGS, ...settings };
 
     const slides = React.Children.map(children, (child, i) =>
       cloneElement(child, {
-        className: cx({
+        className: classnames({
           [child.props.className]: child.props.className,
           "active": i === slide,
+          "prev": i === slide - 1,
+          "next": i === slide + 1,
         })
       })
     );
 
-    const x = isTouching ? screenX : this.currentX;
-    const transition = !isTouching ? `transform ${duration}ms ${easing} ${delay}ms` : '';
+    const transition = !isTouching
+      ? `transform ${duration}ms ${easing} ${delay}ms`
+      : '';
 
     return (
       <div
         ref={this.$root}
-        className={cx("SimpleCarousel", { [className]: className })}
+        className={classnames({ SimpleCarousel: true, [className]: className })}
         style={{
           ...style,
-          transform: `translateX(${-x}px)`,
+          transform: `translateX(${-this.currentX}px)`,
           transition,
         }}
         onMouseDown={this.onStart}
         onTouchStart={this.onStart}
+        onClick={this.onClick}
         {...props}
       >
         {slides}
