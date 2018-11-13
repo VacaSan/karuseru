@@ -4,6 +4,7 @@
   overflow-x: visible;
   will-change: transform;
   transform: translateX(0);
+  touch-action: pan-x;
 }
 
 .Karuseru > * {
