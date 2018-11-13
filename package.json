@@ -1,10 +1,14 @@
 {
   "name": "karuseru",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "dist/index.js",
   "keywords": [
-    "react", "component", "carousel", "responsive", "simple"
+    "react",
+    "component",
+    "carousel",
+    "responsive",
+    "simple"
   ],
   "repository": {
     "type": "git",
