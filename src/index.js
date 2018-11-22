@@ -25,6 +25,7 @@ class Karuseru extends Component {
       children: PropTypes.node.isRequired,
       slide: PropTypes.number.isRequired,
       onChange: PropTypes.func.isRequired,
+      disabled: PropTypes.bool,
       className: PropTypes.string,
       style: PropTypes.object,
       settings: PropTypes.shape({
@@ -40,6 +41,7 @@ class Karuseru extends Component {
    */
   static get defaultProps() {
     return {
+      disabled: false,
       className: '',
       style: {},
       settings: Karuseru.SETTINGS,
@@ -208,8 +210,8 @@ class Karuseru extends Component {
       : childrenWidths.slice(0, slide);
 
     let x = 0,
-        moved = 0,
-        child = list[moved];
+      moved = 0,
+      child = list[moved];
     while (Math.abs(this._delta) > (x + child * 0.25)) {
       x += child;
       moved++;
@@ -283,7 +285,7 @@ class Karuseru extends Component {
 
   render() {
     const { isTouching } = this.state;
-    const { children, slide, className, style, settings, ...props } = this.props;
+    const { children, slide, disabled, className, style, settings, ...props } = this.props;
     const { duration, easing, delay } = { ...Karuseru.SETTINGS, ...settings };
 
     const slides = React.Children.map(children, (child, i) =>
@@ -301,6 +303,14 @@ class Karuseru extends Component {
       ? `transform ${duration}ms ${easing} ${delay}ms`
       : '';
 
+    const eventHandlers = disabled
+      ? {}
+      : {
+        onMouseDown: this.onStart,
+        onTouchStart: this.onStart,
+        onClick: this.onClick
+      };
+
     return (
       <div
         ref={this.$root}
@@ -310,9 +320,7 @@ class Karuseru extends Component {
           transform: `translateX(${-this.currentX}px)`,
           transition,
         }}
-        onMouseDown={this.onStart}
-        onTouchStart={this.onStart}
-        onClick={this.onClick}
+        {...eventHandlers}
         {...props}
       >
         {slides}
