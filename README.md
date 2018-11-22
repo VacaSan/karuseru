@@ -110,6 +110,7 @@ class CarouselWithControls extends Component {
 | `children` | `node` | (_required_) Slides to render. |
 | `slide` | `number` | (_required_) Current slide index. |
 | `onChange({ slide: number, length: number }) => void` | `Function` | (_required_) Function that runs whenever the carousel value is changed _and committed_ by way of a user event, e.g. when a user stops dragging the carousel. |
+| `disabled` | `[boolean=false]` | Disable dragging and touch swiping. |
 | `settings` | `[Object]` | Additional parameters. |
 | `settings.duration` | `[number=250]` | Transition duration (in ms). |
 | `settings.delay` | `[number=0]`| Transition delay (in ms). |
