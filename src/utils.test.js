@@ -1,4 +1,4 @@
-import { classnames, clamp, add, map, subtract } from "./utils";
+import { classnames, clamp, add, map, subtract, sum } from "./utils";
 
 describe("utils", () => {
   describe("add", () => {
@@ -37,6 +37,26 @@ describe("utils", () => {
     it("should return a differenct of two numbers", () => {
       const actual = subtract(3, 1);
       const expected = 2;
+      expect(actual).toBe(expected);
+    });
+  });
+
+  describe("sum", () => {
+    it("should return a number", () => {
+      const actual = typeof sum(1, 2);
+      const expected = "number";
+      expect(actual).toBe(expected);
+    });
+
+    it("should return the sum of arguments", () => {
+      const actual = sum(1, 2, 3);
+      const expected = 6;
+      expect(actual).toBe(expected);
+    });
+
+    it("should return the sum of arguments", () => {
+      const actual = sum(1, 2, -3);
+      const expected = 0;
       expect(actual).toBe(expected);
     });
   });

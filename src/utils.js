@@ -17,6 +17,13 @@ export const add = (a, b) => a + b;
 export const subtract = (a, b) => a - b;
 
 /**
+ * Returns the sum of all parameters
+ * @param {...number} nums
+ * @returns {number}
+ */
+export const sum = (...nums) => nums.reduce(add, 0);
+
+/**
  * Clamps the given value.
  *
  * @param {number} value value to clamp.
