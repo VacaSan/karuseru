@@ -24,6 +24,12 @@ export const subtract = (a, b) => a - b;
 export const sum = (...nums) => nums.reduce(add, 0);
 
 /**
+ * Negates its argument.
+ * @param {number} n
+ */
+export const negate = n => -n;
+
+/**
  * Clamps the given value.
  *
  * @param {number} value value to clamp.
