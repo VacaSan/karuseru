@@ -1,6 +1,6 @@
 import React from "react";
 import Component from "./Component";
-import { add, clamp, map, subtract, sum } from "./utils";
+import { add, clamp, map, negate, subtract, sum } from "./utils";
 
 class Container extends React.Component {
   constructor(props) {
@@ -27,7 +27,7 @@ class Container extends React.Component {
   }
 
   get x() {
-    return sum(...this.state.childrenWidths.slice(0, this.slide));
+    return negate(sum(...this.state.childrenWidths.slice(0, this.slide)));
   }
 
   get slide() {
@@ -72,6 +72,7 @@ class Container extends React.Component {
   layout = fn => {
     const $root = this.$root.current;
     const { width } = $root.getBoundingClientRect();
+    // TODO use React.Children.map?
     const childrenWidths = map(
       child => child.getBoundingClientRect().width,
       $root.children
