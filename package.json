@@ -67,7 +67,7 @@
   },
   "jest": {
     "setupFiles": [
-      "./src/setupTests.js"
+      "./setupTests.js"
     ]
   }
 }
