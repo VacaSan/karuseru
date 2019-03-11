@@ -7,7 +7,7 @@
   touch-action: pan-x;
 }
 
-.Karuseru > * {
+.Karuseru_item {
   display: inline-block;
   flex-shrink: 0;
 }
