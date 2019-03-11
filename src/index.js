@@ -7,13 +7,14 @@ import "./Karuseru.css";
 /**
  * Karuseru: a simple react carousel component.
  */
+// eslint-disable-next-line
 class Karuseru extends Component {
   state = {
     width: 0,
     totalWidth: 0,
     childrenWidths: [],
     delta: 0,
-    isTouching: false
+    isTouching: false,
   };
 
   $root = createRef();
@@ -32,8 +33,8 @@ class Karuseru extends Component {
       settings: PropTypes.shape({
         duration: PropTypes.number, // in ms,
         easing: PropTypes.string, // timing function,
-        delay: PropTypes.number // in ms,
-      })
+        delay: PropTypes.number, // in ms,
+      }),
     };
   }
 
@@ -45,7 +46,7 @@ class Karuseru extends Component {
       disabled: false,
       className: "",
       style: {},
-      settings: Karuseru.SETTINGS
+      settings: Karuseru.SETTINGS,
     };
   }
 
@@ -56,7 +57,7 @@ class Karuseru extends Component {
     return {
       duration: 225,
       easing: "cubic-bezier(0.0, 0.0, 0.2, 1)",
-      delay: 0
+      delay: 0,
     };
   }
 
@@ -132,7 +133,7 @@ class Karuseru extends Component {
     window.requestAnimationFrame(this.update);
 
     this.setState({
-      isTouching: true
+      isTouching: true,
     });
   };
 
@@ -150,7 +151,7 @@ class Karuseru extends Component {
     this.removeEventListeners();
 
     this.setState({
-      isTouching: false
+      isTouching: false,
     });
   };
 
@@ -184,7 +185,7 @@ class Karuseru extends Component {
       {
         width,
         totalWidth,
-        childrenWidths
+        childrenWidths,
       },
       callback
     );
@@ -198,7 +199,7 @@ class Karuseru extends Component {
     const { slide } = this.props;
 
     this.setState({
-      delta: isTouching ? this._delta : 0
+      delta: isTouching ? this._delta : 0,
     });
 
     if (isTouching) {
@@ -307,8 +308,8 @@ class Karuseru extends Component {
           [child.props.className]: child.props.className,
           active: i === slide,
           prev: i === slide - 1,
-          next: i === slide + 1
-        })
+          next: i === slide + 1,
+        }),
       })
     );
 
@@ -321,7 +322,7 @@ class Karuseru extends Component {
       : {
           onMouseDown: this.onStart,
           onTouchStart: this.onStart,
-          onClick: this.onClick
+          onClick: this.onClick,
         };
 
     return (
@@ -331,7 +332,7 @@ class Karuseru extends Component {
         style={{
           ...style,
           transform: `translateX(${-this.currentX}px)`,
-          transition
+          transition,
         }}
         {...eventHandlers}
         {...props}

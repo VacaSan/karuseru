@@ -9,9 +9,9 @@ const addItemClassToChildren = (slide, children) =>
         "Karuseru_item--active": key === slide,
         "Karuseru_item--prev": key === slide - 1,
         "Karuseru_item--next": key === slide + 1,
-        [child.props.className]: child.props.className
+        [child.props.className]: child.props.className,
       }),
-      key
+      key,
     })
   );
 
@@ -37,7 +37,7 @@ Component.propTypes = {
   children: PropTypes.node.isRequired,
   className: PropTypes.string,
   style: PropTypes.object,
-  x: PropTypes.number
+  x: PropTypes.number,
 };
 
 export default Component;

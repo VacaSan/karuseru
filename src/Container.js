@@ -8,7 +8,7 @@ class Container extends React.Component {
     this.state = {
       width: 0,
       childrenWidths: [],
-      slide: props.slide || 0
+      slide: props.slide || 0,
     };
 
     this.$root = React.createRef();
@@ -45,7 +45,7 @@ class Container extends React.Component {
     if (!this.isControlled) {
       this.setState(
         {
-          slide
+          slide,
         },
         () => {
           if (this.props.onChange) {
@@ -81,7 +81,7 @@ class Container extends React.Component {
     this.setState(
       {
         width,
-        childrenWidths
+        childrenWidths,
       },
       fn
     );

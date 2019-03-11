@@ -6,7 +6,7 @@ import "./styles.css";
 const imgs = [
   "https://images.pexels.com/photos/5439/earth-space.jpg?auto=compress&cs=tinysrgb&dpr=2&h=350",
   "https://images.pexels.com/photos/1434608/pexels-photo-1434608.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=350",
-  "https://images.pexels.com/photos/733475/pexels-photo-733475.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=350"
+  "https://images.pexels.com/photos/733475/pexels-photo-733475.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=350",
 ];
 
 class App extends Component {
@@ -26,7 +26,7 @@ class App extends Component {
         style={{
           width: "100%",
           maxWidth: 640,
-          margin: "0 auto"
+          margin: "0 auto",
         }}
       >
         <div className="wrap">

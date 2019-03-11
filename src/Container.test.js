@@ -27,7 +27,7 @@ describe("Container", () => {
     wrapper.instance().goTo(1);
     expect(onChange).toBeCalledWith(
       expect.objectContaining({
-        slide: 1
+        slide: 1,
       })
     );
     wrapper.instance().goTo(2);
@@ -46,7 +46,7 @@ describe("Container", () => {
   it("should work in controlled mode", () => {
     class ControlledUsage extends React.Component {
       state = {
-        slide: 0
+        slide: 0,
       };
 
       onChange = ({ slide }) => {
