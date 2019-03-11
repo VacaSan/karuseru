@@ -16,7 +16,7 @@ describe("Component", () => {
 
   it("should render active item", () => {
     const wrapper = createComponent({
-      active: 0,
+      slide: 0,
       children: [<div key={1}>hello</div>, <div key={2}>world</div>]
     });
     const actual = wrapper.find(".Karuseru_item--active").length;
@@ -26,7 +26,7 @@ describe("Component", () => {
 
   it("should render prev item", () => {
     const wrapper = createComponent({
-      active: 1,
+      slide: 1,
       children: [<div key={1}>hello</div>, <div key={2}>world</div>]
     });
     const actual = wrapper.find(".Karuseru_item--prev").length;
@@ -36,7 +36,7 @@ describe("Component", () => {
 
   it("should render next item", () => {
     const wrapper = createComponent({
-      active: 0,
+      slide: 0,
       children: [<div key={1}>hello</div>, <div key={2}>world</div>]
     });
     const actual = wrapper.find(".Karuseru_item--next").length;
@@ -46,7 +46,7 @@ describe("Component", () => {
 
   it("should apply transform", () => {
     const wrapper = createComponent({
-      active: 0,
+      slide: 0,
       x: 10,
       children: [<div key={1}>hello</div>, <div key={2}>world</div>]
     });

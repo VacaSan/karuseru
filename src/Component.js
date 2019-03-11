@@ -2,13 +2,13 @@ import React from "react";
 import PropTypes from "prop-types";
 import { classnames } from "./utils";
 
-const addItemClassToChildren = (active, children) =>
+const addItemClassToChildren = (slide, children) =>
   React.Children.map(children, (child, key) =>
     React.cloneElement(child, {
       className: classnames("Karuseru_item", {
-        "Karuseru_item--active": key === active,
-        "Karuseru_item--prev": key === active - 1,
-        "Karuseru_item--next": key === active + 1,
+        "Karuseru_item--active": key === slide,
+        "Karuseru_item--prev": key === slide - 1,
+        "Karuseru_item--next": key === slide + 1,
         [child.props.className]: child.props.className
       }),
       key
@@ -18,21 +18,21 @@ const addItemClassToChildren = (active, children) =>
 const addStyles = (x, style) =>
   Object.assign({}, style, { transform: `translateX(${x}px)` });
 
-const KaruseruComponent = React.forwardRef(
-  ({ active = 0, children, className = "", style = {}, x = 0 }, ref) => {
+const Component = React.forwardRef(
+  ({ slide = 0, children, className = "", style = {}, x = 0 }, ref) => {
     return (
       <div
         ref={ref}
         className={classnames("Karuseru", { [className]: className })}
         style={addStyles(x, style)}
       >
-        {addItemClassToChildren(active, children)}
+        {addItemClassToChildren(slide, children)}
       </div>
     );
   }
 );
 
-KaruseruComponent.propTypes = {
+Component.propTypes = {
   active: PropTypes.number,
   children: PropTypes.node.isRequired,
   className: PropTypes.string,
@@ -40,4 +40,4 @@ KaruseruComponent.propTypes = {
   x: PropTypes.number
 };
 
-export default KaruseruComponent;
+export default Component;
