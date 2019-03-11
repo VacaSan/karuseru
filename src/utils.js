@@ -5,7 +5,16 @@
  * @param {number} b
  * @return {number}
  */
-export const sum = (a, b) => a + b;
+export const add = (a, b) => a + b;
+
+/**
+ * Subtracts its second argument from its first argument.
+ *
+ * @param {number} a
+ * @param {number} b
+ * @returns {number}
+ */
+export const subtract = (a, b) => a - b;
 
 /**
  * Clamps the given value.
