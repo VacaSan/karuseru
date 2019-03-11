@@ -22,22 +22,32 @@ export const clamp = (value, lower, upper) => {
 /**
  * Creates a className string from the className object.
  *
- * @param {Object} obj object containing className/boolean pairs.
+ * @param {string|Object} names class names.
  * @return {string} className string.
  */
-export const classnames = (obj) => {
-  return Object.keys(obj).filter(name => obj[name]).join(' ');
+export const classnames = (...names) => {
+  return names
+    .reduce(
+      (className, name) =>
+        className.concat(
+          typeof name === "string"
+            ? name
+            : Object.keys(name).filter(key => name[key])
+        ),
+      []
+    )
+    .join(" ");
 };
 
 /**
  * Creates a new array with the results of calling a provided function
  * on every element in the given array.
  *
- * @param {any[]} arr array to map over.
  * @param {Function} callback Function that produces an element of the new Array.
+ * @param {any[]} arr array to map over.
  * @return {any[]} A new array with each element being the result of the callback function.
  */
-export const map = (arr, callback) => {
+export const map = (callback, arr) => {
   let res = [];
 
   const L = arr.length;
