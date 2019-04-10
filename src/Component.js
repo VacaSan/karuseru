@@ -15,8 +15,10 @@ const addItemClassToChildren = (slide, children) =>
     })
   );
 
-const addStyles = (x, style) =>
-  Object.assign({}, style, { transform: `translateX(${x}px)` });
+const createStyles = (x, style) => ({
+  ...style,
+  transform: `translateX(${x}px)`,
+});
 
 const Component = React.forwardRef(
   ({ slide = 0, children, className = "", style = {}, x = 0 }, ref) => {
@@ -24,7 +26,7 @@ const Component = React.forwardRef(
       <div
         ref={ref}
         className={classnames("Karuseru", { [className]: className })}
-        style={addStyles(x, style)}
+        style={createStyles(x, style)}
       >
         {addItemClassToChildren(slide, children)}
       </div>
@@ -32,10 +34,13 @@ const Component = React.forwardRef(
   }
 );
 
+Component.displayName = "Component";
+
 Component.propTypes = {
   active: PropTypes.number,
   children: PropTypes.node.isRequired,
   className: PropTypes.string,
+  slide: PropTypes.number,
   style: PropTypes.object,
   x: PropTypes.number,
 };

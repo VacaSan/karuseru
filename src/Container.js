@@ -1,8 +1,15 @@
 import React from "react";
+import PropTypes from "prop-types";
 import Component from "./Component";
 import { add, clamp, map, negate, subtract, sum } from "./utils";
 
 class Container extends React.Component {
+  static propTypes = {
+    children: PropTypes.node.isRequired,
+    onChange: PropTypes.func,
+    slide: PropTypes.number,
+  };
+
   constructor(props) {
     super(props);
     this.state = {
