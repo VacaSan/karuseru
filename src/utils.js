@@ -22,16 +22,14 @@ const negate = n => -n;
  */
 function makeStops(el) {
   /** @type {[number, number][]} */
-  let steps = [];
-  // TODO align(item) (center | left | right)
-  let offset = 0;
+  let stops = [];
   // @ts-ignore
   for (let child of el.children) {
-    const { width } = child.getBoundingClientRect();
-    steps.push([offset, width]);
-    offset += width;
+    const width = child.offsetWidth;
+    const offset = child.offsetLeft;
+    stops.push([offset, width]);
   }
-  return steps;
+  return stops;
 }
 
 /**
@@ -41,17 +39,18 @@ function makeStops(el) {
  * @param {[number,number][]} arg0.stops (offset, width) tuple array
  */
 function findIndex({ x, stops }) {
-  if (x <= 0) return 0;
+  const [min] = stops[0];
+  if (x <= min) return 0;
 
   const n = stops.length - 1;
-  const [a, b] = stops[n];
-  if (x > a + b) return n;
+  const [a] = stops[n];
+  if (x >= a) return n;
 
   for (let i = 0; i <= n; i++) {
-    const [offset, width] = stops[i];
-    const nextStop = offset + width;
-    if (x >= offset && x <= nextStop) {
-      if (nextStop - x < x - offset) return Math.min(i + 1, n);
+    const [offset] = stops[i];
+    const [nextOffset] = stops[i + 1] || [Number.POSITIVE_INFINITY];
+    if (x >= offset && x <= nextOffset) {
+      if (nextOffset - x < x - offset) return Math.min(i + 1, n);
       return i;
     }
   }

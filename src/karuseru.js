@@ -38,13 +38,19 @@ function useKaruseru() {
  * @returns {KaruseruState}
  */
 function init(state, action) {
-  return action.type === "INIT"
-    ? {
-        ...state,
-        state: "idle",
-        stops: action.stops,
-      }
-    : state;
+  if (action.type === "INIT") {
+    const { stops } = action;
+    // TODO use initial index? e.g. stops[props.initial]
+    const [x] = stops[0] || [0];
+
+    return {
+      ...state,
+      state: "idle",
+      stops,
+      x,
+    };
+  }
+  return state;
 }
 
 /**
@@ -103,7 +109,7 @@ function settling(state, action) {
       const { x, targetX } = state;
 
       // we hit the target (reduce precision? 1%)
-      // this might need to go to the render
+      // this might need to go to the render (why?)
       if (Math.round(x) === Math.round(targetX)) {
         return { ...state, state: "idle", x: state.targetX, targetX: null };
       }
@@ -127,7 +133,6 @@ function settling(state, action) {
   }
 }
 
-// maybe state machine is not the right solution?
 export const reducer = createMachine({
   init,
   idle,
@@ -138,8 +143,6 @@ export const reducer = createMachine({
 // this one, together with reducer should handle all the "logic", current
 // state of the component, what is the next x, are the buttons disabled...
 function Karuseru({ children }) {
-  // store only x value on only index?
-  // store layout info in store?
   const [{ state, x, targetX }, dispatch] = React.useReducer(reducer, {
     state: "init",
     x: 0,
@@ -172,7 +175,6 @@ function Track({ children, style = {}, ...props }) {
   const trackRef = React.useRef(null);
   React.useLayoutEffect(() => {
     if (trackRef.current) {
-      // use offsetLeft?
       const stops = makeStops(trackRef.current);
       dispatch({ type: "INIT", stops });
     }
@@ -181,6 +183,7 @@ function Track({ children, style = {}, ...props }) {
   const xRef = React.useRef(null);
   const startXRef = React.useRef(null);
   const deltaXRef = React.useRef(null);
+  // how can we request/cancel AF only when we need it?
   useAnimationFrame(function update() {
     if (state === "dragging" && deltaXRef.current !== null) {
       const nextX = xRef.current - deltaXRef.current;

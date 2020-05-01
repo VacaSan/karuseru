@@ -23,8 +23,8 @@ function App() {
                   alignItems: "center",
                   justifyContent: "center",
                   backgroundColor: "#fff",
-                  // margin: "0 1rem",
-                  width: "50%",
+                  marginRight: "1rem",
+                  width: "calc(50% - 0.5rem)",
                   height: 200,
                   borderRadius: "0.25rem",
                   boxShadow:
