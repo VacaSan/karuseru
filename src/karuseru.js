@@ -183,19 +183,19 @@ function Track({ children, style = {}, ...props }) {
   const xRef = React.useRef(null);
   const startXRef = React.useRef(null);
   const deltaXRef = React.useRef(null);
-  // how can we request/cancel AF only when we need it?
-  useAnimationFrame(function update() {
-    if (state === "dragging" && deltaXRef.current !== null) {
-      const nextX = xRef.current - deltaXRef.current;
-      dispatch({ type: "UPDATE", x: nextX });
-    }
 
-    if (state === "settling" && targetX !== null) {
-      // TODO use fancy easing, based on exit speed
-      const nextX = x + (targetX - x) / 10;
-      dispatch({ type: "UPDATE", x: nextX });
-    }
-  });
+  // not sure about this implementation...
+  useAnimationFrame(function draggingAnimation() {
+    const nextX = xRef.current - deltaXRef.current;
+    dispatch({ type: "UPDATE", x: nextX });
+  }, state === "dragging" && deltaXRef.current !== null);
+
+  // feal like this shouldn't be here...
+  useAnimationFrame(function settlingAnimation() {
+    // TODO use fancy easing, based on exit speed
+    const nextX = x + (targetX - x) / 10;
+    dispatch({ type: "UPDATE", x: nextX });
+  }, state === "settling" && targetX !== null);
 
   // i don't know if this "optimization" helps or not?
   const onStart = React.useCallback(

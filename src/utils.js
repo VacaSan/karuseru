@@ -74,23 +74,26 @@ function getStop(state, node = "CURRENT") {
   }
 }
 
-function useAnimationFrame(callback) {
-  const requestRef = React.useRef(0);
-  const previousTimeRef = React.useRef(undefined);
-
-  React.useEffect(() => {
-    function animate(time) {
-      if (previousTimeRef.current !== undefined) {
-        const deltaTime = time - previousTimeRef.current;
-        callback(deltaTime);
-      }
-      previousTimeRef.current = time;
-      requestRef.current = requestAnimationFrame(animate);
-    }
-
-    requestRef.current = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(requestRef.current);
+// https://github.com/facebook/react/issues/14195
+function useAnimationFrame(callback, condition) {
+  const callbackRef = React.useRef(callback);
+  React.useLayoutEffect(() => {
+    callbackRef.current = callback;
   }, [callback]);
+
+  const frameRef = React.useRef(0);
+  React.useLayoutEffect(() => {
+    const loop = () => {
+      if (condition) {
+        frameRef.current = requestAnimationFrame(loop);
+        const cb = callbackRef.current;
+        cb();
+      }
+    };
+
+    frameRef.current = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(frameRef.current);
+  }, [condition]);
 }
 
 export {
