@@ -1,13 +1,56 @@
-import React from "react";
+import { useSpring } from "react-spring";
 
-function createMachine(reducers) {
-  return function stateReducer(state, action) {
-    if (Object.prototype.hasOwnProperty.call(reducers, state.state)) {
-      return reducers[state.state](state, action);
-    }
+/**
+ * Use this wrapper hook instead of useSpring from react-spring
+ * to make sure that your spring animations have velocity,
+ * even when parts of the animation have been delegated to other means of control
+ * (e.g. gestures)
+ */
 
-    throw new TypeError(`unhandled state [${state.state}].`);
+function getTrackedVar(_trackedVar, initialConfig) {
+  if (_trackedVar) return _trackedVar;
+  const hasX = initialConfig.x !== undefined;
+  const hasY = initialConfig.y !== undefined;
+  if ((hasX && hasY) || (!hasX && !hasY)) {
+    throw new Error(
+      "[useVelocityTrackedSpring] can't automatically detect which variable to track, so you need to specify which variable should be tracked in the second argument"
+    );
+  }
+  return hasX ? "x" : "y";
+}
+
+// https://github.com/aholachek/mobile-first-animation/blob/master/src/useVelocityTrackedSpring.js
+function useVelocityTrackedSpring(initialConfigFunc, _trackedVar) {
+  const initialConfig = initialConfigFunc();
+  const trackedVar = getTrackedVar(_trackedVar, initialConfig);
+  // @ts-ignore
+  const [springValues, set] = useSpring(initialConfigFunc);
+  // @ts-ignore
+  const [{ velocityTracker }, setVelocityTracker] = useSpring(() => ({
+    velocityTracker: initialConfig[trackedVar],
+    ...initialConfig,
+  }));
+
+  // you can disable the tracking or setting of velocity by providing options in the second argument
+  // @ts-ignore
+  const wrappedSet = (data, { skipTrackVelocity, skipSetVelocity } = {}) => {
+    // update velocity tracker
+    const velocityTrackerArgs = { config: data.config };
+    if (data[trackedVar] && !skipTrackVelocity)
+      velocityTrackerArgs.velocityTracker = data[trackedVar];
+    setVelocityTracker(velocityTrackerArgs);
+
+    // update actual spring
+    if (data.immediate) return set(data);
+    set({
+      ...data,
+      config: {
+        ...data.config,
+        velocity: !skipSetVelocity && velocityTracker.lastVelocity,
+      },
+    });
   };
+  return [springValues, wrappedSet];
 }
 
 const callAll = (...fns) => (...args) => fns.forEach(fn => fn && fn(...args));
@@ -74,34 +117,11 @@ function getStop(state, node = "CURRENT") {
   }
 }
 
-// https://github.com/facebook/react/issues/14195
-function useAnimationFrame(callback, condition) {
-  const callbackRef = React.useRef(callback);
-  React.useLayoutEffect(() => {
-    callbackRef.current = callback;
-  }, [callback]);
-
-  const frameRef = React.useRef(0);
-  React.useLayoutEffect(() => {
-    const loop = () => {
-      if (condition) {
-        frameRef.current = requestAnimationFrame(loop);
-        const cb = callbackRef.current;
-        cb();
-      }
-    };
-
-    frameRef.current = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(frameRef.current);
-  }, [condition]);
-}
-
 export {
-  createMachine,
   makeStops,
   getStop,
   negate,
   callAll,
   findIndex,
-  useAnimationFrame,
+  useVelocityTrackedSpring,
 };
