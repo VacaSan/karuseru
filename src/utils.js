@@ -23,16 +23,13 @@ function getTrackedVar(_trackedVar, initialConfig) {
 function useVelocityTrackedSpring(initialConfigFunc, _trackedVar) {
   const initialConfig = initialConfigFunc();
   const trackedVar = getTrackedVar(_trackedVar, initialConfig);
-  // @ts-ignore
   const [springValues, set] = useSpring(initialConfigFunc);
-  // @ts-ignore
   const [{ velocityTracker }, setVelocityTracker] = useSpring(() => ({
     velocityTracker: initialConfig[trackedVar],
     ...initialConfig,
   }));
 
   // you can disable the tracking or setting of velocity by providing options in the second argument
-  // @ts-ignore
   const wrappedSet = (data, { skipTrackVelocity, skipSetVelocity } = {}) => {
     // update velocity tracker
     const velocityTrackerArgs = { config: data.config };
@@ -53,58 +50,38 @@ function useVelocityTrackedSpring(initialConfigFunc, _trackedVar) {
   return [springValues, wrappedSet];
 }
 
+// https://mobile-first-animation.netlify.app/26
+const projection = (initialVelocity, decelerationRate) =>
+  (initialVelocity * decelerationRate) / (1.0 - decelerationRate);
+
 const callAll = (...fns) => (...args) => fns.forEach(fn => fn && fn(...args));
 
-/** @param {number} n */
-const negate = n => -n;
-
-/**
- * creates (stop, width) tuple array
- * @param {HTMLElement} el
- * @returns {[number, number][]}
- */
-function makeStops(el) {
-  /** @type {[number, number][]} */
-  let stops = [];
-  // @ts-ignore
-  for (let child of el.children) {
-    const width = child.offsetWidth;
-    const offset = child.offsetLeft;
-    stops.push([offset, width]);
-  }
-  return stops;
+function makeStops(el, align) {
+  const containerWidth = el.offsetWidth;
+  return Array.from(el.children, child => {
+    return makeStop(child.offsetLeft, child.offsetWidth, containerWidth, align);
+  });
 }
 
-/**
- * returns index of the stop that is the closest match
- * @param {object} arg0
- * @param {number} arg0.x current x
- * @param {[number,number][]} arg0.stops (offset, width) tuple array
- */
+function makeStop(offset, width, containerWidth, align) {
+  switch (align) {
+    case "center":
+      return -(offset - (containerWidth - width) / 2);
+    case "right":
+      return -(offset - (containerWidth - width));
+    default:
+      return -offset;
+  }
+}
+
+// TODO re-name findClosestMatch(x:number, stops: number[]):number
 function findIndex({ x, stops }) {
-  const [min] = stops[0];
-  if (x <= min) return 0;
-
-  const n = stops.length - 1;
-  const [a] = stops[n];
-  if (x >= a) return n;
-
-  for (let i = 0; i <= n; i++) {
-    const [offset] = stops[i];
-    const [nextOffset] = stops[i + 1] || [Number.POSITIVE_INFINITY];
-    if (x >= offset && x <= nextOffset) {
-      if (nextOffset - x < x - offset) return Math.min(i + 1, n);
-      return i;
-    }
-  }
+  const nextX = stops.reduce((prev, curr) => {
+    return Math.abs(curr - x) < Math.abs(prev - x) ? curr : prev;
+  });
+  return stops.indexOf(nextX);
 }
 
-/**
- * @param {object} state
- * @param {number} state.x current x
- * @param {[number,number][]} state.stops (offset, width) tuple array
- * @param {"NEXT" | "PREV" | "CURRENT"} node
- */
 function getStop(state, node = "CURRENT") {
   const index = findIndex(state);
   switch (node) {
@@ -118,10 +95,11 @@ function getStop(state, node = "CURRENT") {
 }
 
 export {
+  makeStop,
   makeStops,
   getStop,
-  negate,
   callAll,
   findIndex,
+  projection,
   useVelocityTrackedSpring,
 };

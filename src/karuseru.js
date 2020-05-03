@@ -4,7 +4,7 @@ import {
   callAll,
   getStop,
   makeStops,
-  negate,
+  projection,
   useVelocityTrackedSpring,
 } from "./utils";
 
@@ -27,19 +27,15 @@ function Karuseru({ children }) {
   );
 }
 
-const projection = (initialVelocity, decelerationRate) =>
-  (initialVelocity * decelerationRate) / (1.0 - decelerationRate);
-
-// https://mobile-first-animation.netlify.app/26
-function Track({ children, style = {}, ...props }) {
+function Track({ children, align = "center", style = {}, ...props }) {
   const trackRef = React.useRef(undefined);
   const [stops, setStops] = React.useState([]);
 
   React.useLayoutEffect(() => {
     if (trackRef.current) {
-      setStops(makeStops(trackRef.current));
+      setStops(makeStops(trackRef.current, align));
     }
-  }, [children]);
+  }, [children, align]);
 
   const [{ x }, set] = useVelocityTrackedSpring(() => {
     // TODO initial offset
@@ -55,9 +51,7 @@ function Track({ children, style = {}, ...props }) {
       let newX;
       if (last) {
         const projectedX = x.getValue() + projection(velocityX, 0.99);
-        // TODO standardize sign
-        const [nearestX] = getStop({ x: negate(projectedX), stops }, "CURRENT");
-        newX = negate(nearestX);
+        newX = getStop({ x: projectedX, stops }, "CURRENT");
       } else {
         newX = memo + movementX;
       }

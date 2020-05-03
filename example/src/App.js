@@ -7,14 +7,20 @@ const slides = ["first", "second", "third"];
 
 function App() {
   const [state, setState] = React.useState(slides);
+  const [align, setAlign] = React.useState("center");
   return (
     <React.Fragment>
       <button onClick={() => setState(slides.concat("forth"))}>
         add forth
       </button>
+      <select value={align} onChange={evt => setAlign(evt.target.value)}>
+        <option value="left">left</option>
+        <option value="center">center</option>
+        <option value="right">right</option>
+      </select>
       <div style={{ width: 600, margin: "0 auto", border: "1px solid red" }}>
         <Karuseru>
-          <Karuseru.Track>
+          <Karuseru.Track align={align}>
             {state.map(msg => (
               <Karuseru.Slide
                 key={msg}
