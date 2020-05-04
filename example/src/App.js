@@ -7,7 +7,7 @@ const slides = ["first", "second", "third"];
 
 function App() {
   const [state, setState] = React.useState(slides);
-  const [align, setAlign] = React.useState("left");
+  const [align, setAlign] = React.useState("center");
   return (
     <React.Fragment>
       <button onClick={() => setState(slides.concat("forth"))}>

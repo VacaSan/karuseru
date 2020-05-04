@@ -28,20 +28,48 @@ function Karuseru({ children }) {
   );
 }
 
-function Track({ children, align = "center", style = {}, ...props }) {
-  const trackRef = React.useRef(undefined);
-  const [stops, setStops] = React.useState([]);
+function useOnStopsChanged(onChange, [align, children]) {
+  const trackRef = React.useRef(null);
+  const prevStopsRef = React.useRef(undefined);
+  const nextStopsRef = React.useRef(undefined);
 
+  // TODO update on resize...
   React.useLayoutEffect(() => {
     if (trackRef.current) {
-      setStops(makeStops(trackRef.current, align));
+      prevStopsRef.current = nextStopsRef.current;
+      nextStopsRef.current = makeStops(trackRef.current, align);
+      onChange(nextStopsRef.current, prevStopsRef.current);
     }
-  }, [children, align]);
+  }, [align, children, onChange]);
 
-  const [{ x }, set] = useVelocityTrackedSpring(() => {
-    // TODO initial offset
-    return { x: 0 };
-  });
+  return trackRef;
+}
+
+function Track({ children, align = "center", style = {}, ...props }) {
+  // TODO const [stops, setStops] = useStops();
+  // TODO const [x, set] = useX();
+  const [stops, setStops] = React.useState([]);
+  const [{ x }, set] = useVelocityTrackedSpring(() => ({ x: 0 }));
+
+  const onStopsChanged = React.useCallback(
+    (nextStops, prevStops) => {
+      if (prevStops) {
+        const prevX = findClosestMatch(prevStops, x.getValue());
+        const index = prevStops.indexOf(prevX);
+        set({ x: nextStops[index] });
+        setStops(nextStops);
+      } else {
+        // TODO nextStops[initialIndex]?
+        // technically i think it is safe to pass initialIndex,
+        // because this branch will only fire on initial render?
+        set({ x: nextStops[0], immediate: true });
+        setStops(nextStops);
+      }
+    },
+    [setStops, set, x]
+  );
+
+  const trackRef = useOnStopsChanged(onStopsChanged, [align, children]);
 
   const bind = useDrag(
     ({ last, movement: [movementX], vxvy: [velocityX], memo }) => {

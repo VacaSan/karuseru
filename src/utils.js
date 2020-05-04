@@ -1,3 +1,4 @@
+import React from "react";
 import { useSpring } from "react-spring";
 
 const callAll = (...fns) => (...args) => fns.forEach(fn => fn && fn(...args));
@@ -32,23 +33,26 @@ function useVelocityTrackedSpring(initialConfigFunc, _trackedVar) {
   }));
 
   // you can disable the tracking or setting of velocity by providing options in the second argument
-  const wrappedSet = (data, { skipTrackVelocity, skipSetVelocity } = {}) => {
-    // update velocity tracker
-    const velocityTrackerArgs = { config: data.config };
-    if (data[trackedVar] && !skipTrackVelocity)
-      velocityTrackerArgs.velocityTracker = data[trackedVar];
-    setVelocityTracker(velocityTrackerArgs);
+  const wrappedSet = React.useCallback(
+    (data, { skipTrackVelocity, skipSetVelocity } = {}) => {
+      // update velocity tracker
+      const velocityTrackerArgs = { config: data.config };
+      if (data[trackedVar] && !skipTrackVelocity)
+        velocityTrackerArgs.velocityTracker = data[trackedVar];
+      setVelocityTracker(velocityTrackerArgs);
 
-    // update actual spring
-    if (data.immediate) return set(data);
-    set({
-      ...data,
-      config: {
-        ...data.config,
-        velocity: !skipSetVelocity && velocityTracker.lastVelocity,
-      },
-    });
-  };
+      // update actual spring
+      if (data.immediate) return set(data);
+      set({
+        ...data,
+        config: {
+          ...data.config,
+          velocity: !skipSetVelocity && velocityTracker.lastVelocity,
+        },
+      });
+    },
+    [set, setVelocityTracker, trackedVar, velocityTracker.lastVelocity]
+  );
   return [springValues, wrappedSet];
 }
 
