@@ -1,5 +1,7 @@
 import { useSpring } from "react-spring";
 
+const callAll = (...fns) => (...args) => fns.forEach(fn => fn && fn(...args));
+
 /**
  * Use this wrapper hook instead of useSpring from react-spring
  * to make sure that your spring animations have velocity,
@@ -54,7 +56,17 @@ function useVelocityTrackedSpring(initialConfigFunc, _trackedVar) {
 const projection = (initialVelocity, decelerationRate) =>
   (initialVelocity * decelerationRate) / (1.0 - decelerationRate);
 
-const callAll = (...fns) => (...args) => fns.forEach(fn => fn && fn(...args));
+const rubberBand = (offset, constant = 0.7) => Math.pow(offset, constant);
+
+function rubberBandIfOutOfBounds(min, max, value) {
+  if (value < min) {
+    return min - rubberBand(Math.abs(value - min));
+  }
+  if (value > max) {
+    return max + rubberBand(Math.abs(max - value));
+  }
+  return value;
+}
 
 function makeStops(el, align) {
   const containerWidth = el.offsetWidth;
@@ -74,32 +86,18 @@ function makeStop(offset, width, containerWidth, align) {
   }
 }
 
-// TODO re-name findClosestMatch(x:number, stops: number[]):number
-function findIndex({ x, stops }) {
-  const nextX = stops.reduce((prev, curr) => {
+function findClosestMatch(stops, x) {
+  return stops.reduce((prev, curr) => {
     return Math.abs(curr - x) < Math.abs(prev - x) ? curr : prev;
   });
-  return stops.indexOf(nextX);
-}
-
-function getStop(state, node = "CURRENT") {
-  const index = findIndex(state);
-  switch (node) {
-    case "NEXT":
-      return state.stops[Math.min(index + 1, state.stops.length - 1)];
-    case "PREV":
-      return state.stops[Math.max(index - 1, 0)];
-    default:
-      return state.stops[index];
-  }
 }
 
 export {
+  callAll,
   makeStop,
   makeStops,
-  getStop,
-  callAll,
-  findIndex,
   projection,
+  findClosestMatch,
+  rubberBandIfOutOfBounds,
   useVelocityTrackedSpring,
 };

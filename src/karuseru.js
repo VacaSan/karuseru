@@ -2,9 +2,10 @@ import styles from "./styles.module.css";
 import React from "react";
 import {
   callAll,
-  getStop,
   makeStops,
   projection,
+  findClosestMatch,
+  rubberBandIfOutOfBounds,
   useVelocityTrackedSpring,
 } from "./utils";
 
@@ -51,9 +52,13 @@ function Track({ children, align = "center", style = {}, ...props }) {
       let newX;
       if (last) {
         const projectedX = x.getValue() + projection(velocityX, 0.99);
-        newX = getStop({ x: projectedX, stops }, "CURRENT");
+        newX = findClosestMatch(stops, projectedX);
       } else {
-        newX = memo + movementX;
+        newX = rubberBandIfOutOfBounds(
+          stops[stops.length - 1],
+          stops[0],
+          memo + movementX
+        );
       }
 
       set({ x: newX, immediate: !last });
