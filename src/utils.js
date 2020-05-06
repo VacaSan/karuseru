@@ -96,6 +96,10 @@ function findClosestMatch(stops, x) {
   });
 }
 
+const hasNext = (x, stops) => x <= (stops || [])[(stops?.length || 0) - 1] + 10;
+
+const hasPrev = (x, stops) => x >= (stops || [])[0] - 10;
+
 export {
   callAll,
   makeStop,
@@ -104,4 +108,6 @@ export {
   findClosestMatch,
   rubberBandIfOutOfBounds,
   useVelocityTrackedSpring,
+  hasPrev,
+  hasNext,
 };

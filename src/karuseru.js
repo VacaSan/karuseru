@@ -7,6 +7,8 @@ import {
   findClosestMatch,
   rubberBandIfOutOfBounds,
   useVelocityTrackedSpring,
+  hasPrev,
+  hasNext,
 } from "./utils";
 
 import { animated } from "react-spring";
@@ -105,6 +107,10 @@ function Slide(props) {
   return <li className={styles["karuseru-slide"]} {...props} />;
 }
 
+// this way i can treat disabled attribute as a boolean value,
+// and not disabled="false"
+const Button = animated(props => <button {...props} />);
+
 function Next({ onClick, ...props }) {
   const { set, stopsRef, x } = React.useContext(KaruseruContext);
 
@@ -116,7 +122,13 @@ function Next({ onClick, ...props }) {
     set({ x: nextX, immediate: false });
   }, [set, stopsRef, x]);
 
-  return <button onClick={callAll(next, onClick)} {...props} />;
+  return (
+    <Button
+      disabled={x.interpolate(x => hasNext(x, stopsRef.current))}
+      onClick={callAll(next, onClick)}
+      {...props}
+    />
+  );
 }
 
 function Prev({ onClick, ...props }) {
@@ -129,7 +141,13 @@ function Prev({ onClick, ...props }) {
     set({ x: nextX, immediate: false });
   }, [set, stopsRef, x]);
 
-  return <button onClick={callAll(prev, onClick)} {...props} />;
+  return (
+    <Button
+      disabled={x.interpolate(x => hasPrev(x, stopsRef.current))}
+      onClick={callAll(prev, onClick)}
+      {...props}
+    />
+  );
 }
 
 Karuseru.Track = Track;
