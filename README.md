@@ -1,130 +1,34 @@
-# Karuseru
+# カルセル 🎠
 
-A simple react carousel component.
+## TODO
 
-## Demo
+[merge to original repo](https://stackoverflow.com/questions/21353656/merge-git-repo-into-branch-of-another-repo)
 
-https://vacasan.github.io/karuseru/
+> Made with create-react-library
 
-## Instalation
+[![NPM](https://img.shields.io/npm/v/karuseru.svg)](https://www.npmjs.com/package/karuseru) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
-```sh
+## Install
+
+```bash
 npm install --save karuseru
 ```
 
 ## Usage
 
-### Slides only
+```jsx
+import React, { Component } from "react";
 
-Carousel with slides only.
+import MyComponent from "karuseru";
+import "karuseru/dist/index.css";
 
-```js
-import React, { Component } from 'react';
-import Karuseru from 'karuseru';
-
-class Carousel extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      slide: 0,
-    };
-  }
-
-  onChange = ({ slide }) => {
-    this.setState({ slide });
-  }
-
+class Example extends Component {
   render() {
-    return (
-      <Karuseru
-        slide={this.state.slide}
-        onChange={this.onChange}
-      >
-        <div>hello</div>
-        <div>world</div>
-      </Karuseru>
-    );
+    return <MyComponent />;
   }
 }
 ```
-
-### With controls
-
-Adding in the previous and next controls:
-
-```js
-
-import React, { Component } from 'react';
-import Karuseru from 'karuseru';
-
-class CarouselWithControls extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      slide: 0,
-      hasNext: true,
-      hasPrev: false,
-    };
-
-    this.carousel = React.createRef();
-  }
-
-  onChange = ({ slide, length }) => {
-    this.setState({
-      slide,
-      hasNext: slide < length - 1,
-      hasPrev: slide > 0,
-    });
-  }
-
-  next = () => this.carousel.current.next();
-
-  prev = () => this.carousel.current.prev();
-
-  render() {
-    return (
-      <div>
-        <Karuseru
-          ref={this.carousel}
-          slide={slide}
-          onChange={this.onChange}
-        >
-          {[1, 2, 3, 4].map((n) => <div key={n}>{n}</div>)}
-        </Karuseru>
-        <button onClick={this.prev} disabled={!hasPrev}>&lt;</button>
-        <button onClick={this.next} disabled={!hasNext}>&gt;</button>
-      </div>
-    );
-  }
-}
-```
-
-### React Simple Carousel API
-
-#### Props
-
-| Name | Type | Description |
-| --- | --- | --- |
-| `children` | `node` | (_required_) Slides to render. |
-| `slide` | `number` | (_required_) Current slide index. |
-| `onChange({ slide: number, length: number }) => void` | `Function` | (_required_) Function that runs whenever the carousel value is changed _and committed_ by way of a user event, e.g. when a user stops dragging the carousel. |
-| `disabled` | `[boolean=false]` | Disable dragging and touch swiping. |
-| `settings` | `[Object]` | Additional parameters. |
-| `settings.duration` | `[number=250]` | Transition duration (in ms). |
-| `settings.delay` | `[number=0]`| Transition delay (in ms). |
-| `settings.easing` | `[string=cubic-bezier(0.0, 0.0, 0.2, 1)]` | Easing function. |
-
-#### Methods
-
-| Method | Description |
-| --- | --- |
-| `next() => void` | Sets the next slide as active. |
-| `prev() => void` | Sets the previous slide as active. |
-| `goTo(slide: number) => void`| Sets the given slide as active. |
-| `layout([callback: Function]) => void` | Recomputes the dimensions and re-lays out the component. This should be called if the dimensions of the slider itself or any of its parent element change programmatically (it is called automatically on resize). |
 
 ## License
 
-MIT
+MIT © [](https://github.com/)

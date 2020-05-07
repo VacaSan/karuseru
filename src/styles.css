@@ -1,0 +1,17 @@
+[data-karuseru-track] {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: visible;
+  will-change: transform;
+  transform: translateX(0);
+  touch-action: pan-y;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+[data-karuseru-slide] {
+  user-select: none;
+  display: inline-block;
+  flex-shrink: 0;
+}
