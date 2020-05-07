@@ -1,3 +1,4 @@
+import "styled-components/macro";
 import React from "react";
 
 import Karuseru from "karuseru";
@@ -24,18 +25,19 @@ function App() {
             {state.map(msg => (
               <Karuseru.Slide
                 key={msg}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  backgroundColor: "#fff",
-                  marginRight: "1rem",
-                  width: "calc(50% - 0.5rem)",
-                  height: 200,
-                  borderRadius: "0.25rem",
-                  boxShadow:
-                    "0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0)",
-                }}
+                css={`
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  background-color: #fff;
+                  margin-right: 1rem;
+                  width: calc(50% - 0.5rem);
+                  height: 200px;
+                  border-radius: 0.25rem;
+                  box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2),
+                    0px 1px 1px 0px rgba(0, 0, 0, 0.14),
+                    0px 1px 3px 0px rgba(0, 0, 0, 0);
+                `}
               >
                 {msg}
               </Karuseru.Slide>

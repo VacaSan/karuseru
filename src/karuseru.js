@@ -1,4 +1,4 @@
-import styles from "./styles.module.css";
+import "./styles.css";
 import React from "react";
 import {
   callAll,
@@ -92,7 +92,7 @@ function Track({ children, align = "center", style = {}, ...props }) {
       ref={trackRef}
       {...props}
       {...bind()}
-      className={styles["karuseru-track"]}
+      data-karuseru-track=""
       style={{
         ...style,
         transform: x.interpolate(x => `translateX(${x}px)`),
@@ -104,7 +104,7 @@ function Track({ children, align = "center", style = {}, ...props }) {
 }
 
 function Slide(props) {
-  return <li className={styles["karuseru-slide"]} {...props} />;
+  return <li data-karuseru-slide="" {...props} />;
 }
 
 // this way i can treat disabled attribute as a boolean value,
