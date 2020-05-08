@@ -21,9 +21,9 @@ function App() {
       </select>
       <div style={{ width: 600, margin: "0 auto", border: "1px solid red" }}>
         <Karuseru>
-          <Karuseru.Track align={align}>
+          <Karuseru.Items align={align}>
             {state.map(msg => (
-              <Karuseru.Slide
+              <Karuseru.Item
                 key={msg}
                 css={`
                   display: flex;
@@ -40,9 +40,10 @@ function App() {
                 `}
               >
                 {msg}
-              </Karuseru.Slide>
+              </Karuseru.Item>
             ))}
-          </Karuseru.Track>
+          </Karuseru.Items>
+          <Karuseru.Nav />
           <Karuseru.Prev>prev</Karuseru.Prev>
           <Karuseru.Next>next</Karuseru.Next>
         </Karuseru>

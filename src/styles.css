@@ -1,4 +1,4 @@
-[data-karuseru-track] {
+[data-karuseru-items] {
   display: flex;
   flex-wrap: nowrap;
   overflow-x: visible;
@@ -10,7 +10,7 @@
   margin: 0;
 }
 
-[data-karuseru-slide] {
+[data-karuseru-item] {
   user-select: none;
   display: inline-block;
   flex-shrink: 0;

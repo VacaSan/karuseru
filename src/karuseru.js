@@ -17,8 +17,9 @@ import { useDrag } from "react-use-gesture";
 const KaruseruContext = React.createContext(undefined);
 
 function Karuseru({ children }) {
-  const trackRef = React.useRef(null);
   const stopsRef = React.useRef(null);
+
+  const [size, setSize] = React.useState(0);
 
   // only state?
   const [{ x }, set] = useVelocityTrackedSpring(() => ({ x: 0 }));
@@ -27,10 +28,11 @@ function Karuseru({ children }) {
     () => ({
       x,
       set,
+      size,
+      setSize,
       stopsRef,
-      trackRef,
     }),
-    [set, x]
+    [set, x, size, setSize]
   );
 
   return (
@@ -40,9 +42,16 @@ function Karuseru({ children }) {
   );
 }
 
-function Track({ children, align = "center", style = {}, ...props }) {
-  const { trackRef, set, stopsRef, x } = React.useContext(KaruseruContext);
+function Items({ children, align = "center", style = {}, ...props }) {
+  const { set, stopsRef, x, setSize } = React.useContext(KaruseruContext);
 
+  // keep track of the number of items
+  const count = React.Children.count(children);
+  React.useEffect(() => {
+    setSize(count);
+  }, [count, setSize]);
+
+  const trackRef = React.useRef(null);
   // TODO update on resize...
   React.useLayoutEffect(() => {
     if (trackRef.current) {
@@ -61,7 +70,7 @@ function Track({ children, align = "center", style = {}, ...props }) {
 
       stopsRef.current = nextStops;
     }
-  }, [align, children, set, stopsRef, trackRef, x]);
+  }, [align, set, stopsRef, trackRef, x]);
 
   const bind = useDrag(
     ({ last, movement: [movementX], vxvy: [velocityX], memo }) => {
@@ -92,7 +101,7 @@ function Track({ children, align = "center", style = {}, ...props }) {
       ref={trackRef}
       {...props}
       {...bind()}
-      data-karuseru-track=""
+      data-karuseru-items=""
       style={{
         ...style,
         transform: x.interpolate(x => `translateX(${x}px)`),
@@ -103,8 +112,8 @@ function Track({ children, align = "center", style = {}, ...props }) {
   );
 }
 
-function Slide(props) {
-  return <li data-karuseru-slide="" {...props} />;
+function Item(props) {
+  return <li data-karuseru-item="" {...props} />;
 }
 
 // this way i can treat disabled attribute as a boolean value,
@@ -150,9 +159,55 @@ function Prev({ onClick, ...props }) {
   );
 }
 
-Karuseru.Track = Track;
-Karuseru.Slide = Slide;
+function defaultRenderItem({ index, isActive, onClick }) {
+  return (
+    <button
+      data-karuseru-nav-item=""
+      {...(isActive ? { "data-karuseru-nav-item-active": "" } : {})}
+      onClick={onClick}
+    >
+      {index}
+    </button>
+  );
+}
+
+const Navigation = animated(function Navigation({
+  x,
+  set,
+  stopsRef,
+  renderItem = defaultRenderItem,
+  ...props
+}) {
+  const stops = stopsRef.current || [0];
+  const activeStop = findClosestMatch(stops, x);
+
+  return (
+    <div data-karuseru-nav="" {...props}>
+      {stops.map((stop, index) => {
+        return (
+          <React.Fragment key={stop}>
+            {renderItem({
+              index,
+              isActive: stop === activeStop,
+              onClick: () => set({ x: stop, immediate: false }),
+            })}
+          </React.Fragment>
+        );
+      })}
+    </div>
+  );
+});
+
+// how can i avoid this?
+function Nav(props) {
+  const { x, set, stopsRef } = React.useContext(KaruseruContext);
+  return <Navigation x={x} set={set} stopsRef={stopsRef} {...props} />;
+}
+
+Karuseru.Items = Items;
+Karuseru.Item = Item;
 Karuseru.Next = Next;
 Karuseru.Prev = Prev;
+Karuseru.Nav = Nav;
 
 export default Karuseru;
