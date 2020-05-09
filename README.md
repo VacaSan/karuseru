@@ -1,14 +1,19 @@
-# カルセル 🎠
-
-## TODO
-
-[merge to original repo](https://stackoverflow.com/questions/21353656/merge-git-repo-into-branch-of-another-repo)
+<div style="text-align: center;">
+  <div style="font-size: 128px; line-height: 1.2; margin-top: 0.125em;">🎠</div>
+  <h1 style="font-size: 32px; font-weight: bold; margin-top: 0;">カルセル</h1>
+</div>
 
 > Made with create-react-library
 
-[![NPM](https://img.shields.io/npm/v/karuseru.svg)](https://www.npmjs.com/package/karuseru) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+[![NPM](https://img.shields.io/npm/v/karuseru.svg)](https://www.npmjs.com/package/karuseru)
 
-## Install
+## Table of Contents
+
+- [Installations](#Installation)
+- [Usage](#Usage)
+- [License](#License)
+
+## Installation
 
 ```bash
 npm install --save karuseru
@@ -17,16 +22,23 @@ npm install --save karuseru
 ## Usage
 
 ```jsx
-import React, { Component } from "react";
+import * as React from "react";
+import { render } from "react-dom";
 
-import MyComponent from "karuseru";
+import Karuseru from "karuseru";
 import "karuseru/dist/index.css";
 
-class Example extends Component {
-  render() {
-    return <MyComponent />;
-  }
-}
+const slides = ["appels", "pears", "stairs"];
+
+render(
+  <Karuseru>
+    <Karuseru.Items>
+      {slides.map(slide => (
+        <Karuseru.Item key={slide}>{slide}</Karuseru.Item>
+      ))}
+    </Karuseru.Items>
+  </Karuseru>
+);
 ```
 
 ## License

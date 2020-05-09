@@ -133,7 +133,9 @@ function Next({ onClick, ...props }) {
 
   return (
     <Button
-      disabled={x.interpolate(x => hasNext(x, stopsRef.current))}
+      data-karuseru-control=""
+      data-karuseru-control-next=""
+      disabled={x.interpolate(x => hasNext(stopsRef.current || [0], x))}
       onClick={callAll(next, onClick)}
       {...props}
     />
@@ -152,7 +154,9 @@ function Prev({ onClick, ...props }) {
 
   return (
     <Button
-      disabled={x.interpolate(x => hasPrev(x, stopsRef.current))}
+      data-karuseru-control=""
+      data-karuseru-control-prev=""
+      disabled={x.interpolate(x => hasPrev(stopsRef.current || [0], x))}
       onClick={callAll(prev, onClick)}
       {...props}
     />
