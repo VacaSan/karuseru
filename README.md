@@ -1,7 +1,4 @@
-<div style="text-align: center;">
-  <div style="font-size: 128px; line-height: 1.2; margin-top: 0.125em;">🎠</div>
-  <h1 style="font-size: 32px; font-weight: bold; margin-top: 0;">カルセル</h1>
-</div>
+# 🎠 カルセル
 
 > Made with create-react-library
 

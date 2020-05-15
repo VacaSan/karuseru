@@ -96,6 +96,14 @@ function Items({ children, align = "center", style = {}, ...props }) {
     }
   );
 
+  const items = React.Children.map(children, (child, index) =>
+    React.cloneElement(child, {
+      x,
+      index,
+      stops: stopsRef.current,
+    })
+  );
+
   return (
     <animated.ul
       ref={trackRef}
@@ -107,17 +115,24 @@ function Items({ children, align = "center", style = {}, ...props }) {
         transform: x.interpolate(x => `translateX(${x}px)`),
       }}
     >
-      {children}
+      {items}
     </animated.ul>
   );
 }
 
-function Item(props) {
-  return <li data-karuseru-item="" {...props} />;
-}
+const Item = animated(function Item({ x, index, stops, ...props }) {
+  const activeStop = findClosestMatch(stops || [0], x);
+  const isActive = activeStop === (stops || [])[index];
 
-// this way i can treat disabled attribute as a boolean value,
-// and not disabled="false"
+  return (
+    <li
+      data-karuseru-item=""
+      {...(isActive ? { "data-karuseru-item-active": "" } : {})}
+      {...props}
+    />
+  );
+});
+
 const Button = animated(props => <button {...props} />);
 
 function Next({ onClick, ...props }) {
@@ -163,12 +178,12 @@ function Prev({ onClick, ...props }) {
   );
 }
 
-function defaultRenderItem({ index, isActive, onClick }) {
+function defaultRenderItem({ index, isActive, go }) {
   return (
     <button
       data-karuseru-nav-item=""
       {...(isActive ? { "data-karuseru-nav-item-active": "" } : {})}
-      onClick={onClick}
+      onClick={go}
     >
       {index}
     </button>
@@ -193,7 +208,7 @@ const Navigation = animated(function Navigation({
             {renderItem({
               index,
               isActive: stop === activeStop,
-              onClick: () => set({ x: stop, immediate: false }),
+              go: () => set({ x: stop, immediate: false }),
             })}
           </React.Fragment>
         );
