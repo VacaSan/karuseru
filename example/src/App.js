@@ -19,7 +19,14 @@ function App() {
         <option value="center">center</option>
         <option value="right">right</option>
       </select>
-      <div style={{ width: 600, margin: "0 auto", border: "1px solid red" }}>
+      <div
+        style={{
+          width: "100%",
+          maxWidth: 600,
+          margin: "0 auto",
+          border: "1px solid red",
+        }}
+      >
         <Karuseru>
           <Karuseru.Items align={align}>
             {state.map(msg => (
