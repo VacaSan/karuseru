@@ -51,16 +51,6 @@ function findClosestMatch(stops, x) {
   });
 }
 
-const hasNext = (stops, x) => {
-  const activeStop = findClosestMatch(stops, x);
-  return stops.indexOf(activeStop) >= stops.length - 1;
-};
-
-const hasPrev = (stops, x) => {
-  const activeStop = findClosestMatch(stops, x);
-  return stops.indexOf(activeStop) <= 0;
-};
-
 export {
   callAll,
   makeStop,
@@ -68,6 +58,4 @@ export {
   projection,
   findClosestMatch,
   rubberBandIfOutOfBounds,
-  hasPrev,
-  hasNext,
 };

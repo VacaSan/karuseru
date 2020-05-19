@@ -52,7 +52,9 @@
     "dist"
   ],
   "dependencies": {
+    "lodash.debounce": "^4.0.8",
     "react-spring": "^9.0.0-rc.3",
-    "react-use-gesture": "^7.0.15"
+    "react-use-gesture": "^7.0.15",
+    "use-resize-observer": "^6.1.0-alpha.3"
   }
 }

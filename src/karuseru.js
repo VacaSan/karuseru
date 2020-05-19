@@ -11,6 +11,9 @@ import {
 import { animated, useSpring } from "react-spring";
 import { useDrag } from "react-use-gesture";
 
+import useResizeObserver from "use-resize-observer";
+import debounce from "lodash.debounce";
+
 // utils (Ramda stuff)
 const R = {
   /** @param {any[]} list */
@@ -83,11 +86,26 @@ function Karuseru({ children }) {
   );
 }
 
+function useSize(ref) {
+  const [size, setSize] = React.useState({ width: 0, height: 0 });
+
+  const onResize = React.useMemo(
+    () => debounce(setSize, 500, { leading: false }),
+    []
+  );
+
+  useResizeObserver({ ref, onResize });
+
+  return size;
+}
+
 function Items({ children, align, ...props }) {
   const { x, set, index, stops, setItems } = React.useContext(KaruseruContext);
 
   /** @type {React.RefObject<HTMLUListElement>} */
   const ref = React.useRef(null);
+
+  const { width } = useSize(ref);
 
   React.useLayoutEffect(() => {
     // set(x) does nothing if called synchronously in effect
@@ -100,7 +118,7 @@ function Items({ children, align, ...props }) {
         return nextItems;
       });
     });
-  }, [set, x, stops, align, children, setItems]);
+  }, [x, set, setItems, align, children, width]);
 
   const bind = useDrag(
     ({ last: isLast, movement: [movementX], vxvy: [velocityX], memo }) => {
@@ -159,11 +177,11 @@ function Item({ isActive, ...props }) {
 }
 
 function Next(props) {
-  const { skip, stops, index } = React.useContext(KaruseruContext);
+  const { skip, items, index } = React.useContext(KaruseruContext);
 
   return (
     <button
-      disabled={index >= stops.current.length - 1}
+      disabled={index >= items.length - 1}
       onClick={callAll(() => skip(1), props.onClick)}
       {...props}
     />
@@ -189,11 +207,11 @@ Prev.defaultProps = {
 };
 
 function Nav(props) {
-  const { stops, index, goTo } = React.useContext(KaruseruContext);
+  const { items, index, goTo } = React.useContext(KaruseruContext);
 
   return (
     <div {...props}>
-      {stops.current.map((stop, i) => {
+      {items.map((stop, i) => {
         const attr = Object.assign(
           { "data-karuseru-nav-item": "" },
           index === i ? { "data-karuseru-nav-item-active": "" } : {}
