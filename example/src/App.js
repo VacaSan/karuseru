@@ -2,7 +2,14 @@
 import "styled-components/macro";
 import React from "react";
 
-import Karuseru from "karuseru";
+import {
+  Karuseru,
+  KaruseruItem,
+  KaruseruItems,
+  KaruseruNav,
+  KaruseruNext,
+  KaruseruPrev,
+} from "karuseru";
 import "karuseru/dist/index.css";
 
 const slides = ["first", "second", "third"];
@@ -44,9 +51,9 @@ function App() {
         }}
       >
         <Karuseru>
-          <Karuseru.Items align={align} contain={contain}>
+          <KaruseruItems align={align} contain={contain}>
             {state.map(msg => (
-              <Karuseru.Item
+              <KaruseruItem
                 key={msg}
                 css={`
                   display: flex;
@@ -63,12 +70,12 @@ function App() {
                 `}
               >
                 {msg}
-              </Karuseru.Item>
+              </KaruseruItem>
             ))}
-          </Karuseru.Items>
-          <Karuseru.Nav />
-          <Karuseru.Prev>prev</Karuseru.Prev>
-          <Karuseru.Next>next</Karuseru.Next>
+          </KaruseruItems>
+          <KaruseruNav />
+          <KaruseruPrev>prev</KaruseruPrev>
+          <KaruseruNext>next</KaruseruNext>
         </Karuseru>
       </div>
     </React.Fragment>

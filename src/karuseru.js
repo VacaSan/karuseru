@@ -99,7 +99,7 @@ function useSize(ref) {
   return size;
 }
 
-function Items({ children, align, contain, ...props }) {
+function KaruseruItems({ children, align, contain, ...props }) {
   const { x, set, index, stops, setItems } = React.useContext(KaruseruContext);
 
   /** @type {React.RefObject<HTMLUListElement>} */
@@ -108,15 +108,12 @@ function Items({ children, align, contain, ...props }) {
   const { width } = useSize(ref);
 
   React.useLayoutEffect(() => {
-    // set(x) does nothing if called synchronously in effect
-    set().then(() => {
-      setItems(prevItems => {
-        // use prevItems to maintain same index
-        const nextItems = makeStops(ref.current, { align, contain });
-        const nextX = findClosestMatch(nextItems, x.get());
-        set({ x: nextX, immediate: false });
-        return nextItems;
-      });
+    setItems(prevItems => {
+      // TODO use prevItems to maintain same index
+      const nextItems = makeStops(ref.current, { align, contain });
+      const nextX = findClosestMatch(nextItems, x.get());
+      set({ x: nextX, immediate: false });
+      return nextItems;
     });
   }, [x, set, setItems, align, contain, children, width]);
 
@@ -164,12 +161,13 @@ function Items({ children, align, contain, ...props }) {
     </animated.ul>
   );
 }
-Items.defaultProps = {
+KaruseruItems.defaultProps = {
   align: "center",
   contain: true,
 };
 
-function Item({ isActive, ...props }) {
+// do I need this component?
+function KaruseruItem({ isActive, ...props }) {
   const attr = Object.assign(
     { "data-karuseru-item": "" },
     isActive ? { "data-karuseru-item-active": "" } : {}
@@ -177,7 +175,7 @@ function Item({ isActive, ...props }) {
   return <li {...props} {...attr} />;
 }
 
-function Next(props) {
+function KaruseruNext(props) {
   const { skip, items, index } = React.useContext(KaruseruContext);
 
   return (
@@ -189,11 +187,11 @@ function Next(props) {
     />
   );
 }
-Next.defaultProps = {
+KaruseruNext.defaultProps = {
   children: "next",
 };
 
-function Prev(props) {
+function KaruseruPrev(props) {
   const { skip, index } = React.useContext(KaruseruContext);
 
   return (
@@ -205,11 +203,11 @@ function Prev(props) {
     />
   );
 }
-Prev.defaultProps = {
+KaruseruPrev.defaultProps = {
   children: "prev",
 };
 
-function Nav(props) {
+function KaruseruNav(props) {
   const { items, index, goTo } = React.useContext(KaruseruContext);
 
   return (
@@ -230,10 +228,11 @@ function Nav(props) {
   );
 }
 
-Karuseru.Items = Items;
-Karuseru.Item = Item;
-Karuseru.Next = Next;
-Karuseru.Prev = Prev;
-Karuseru.Nav = Nav;
-
-export default Karuseru;
+export {
+  Karuseru,
+  KaruseruItem,
+  KaruseruItems,
+  KaruseruNext,
+  KaruseruPrev,
+  KaruseruNav,
+};

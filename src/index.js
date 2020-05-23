@@ -1,1 +1,8 @@
-export { default } from "./karuseru";
+export {
+  Karuseru,
+  KaruseruItem,
+  KaruseruItems,
+  KaruseruNav,
+  KaruseruNext,
+  KaruseruPrev,
+} from "./karuseru";
