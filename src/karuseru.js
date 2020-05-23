@@ -45,39 +45,17 @@ function Karuseru({ children }) {
       setIndex(stops.current.indexOf(findClosestMatch(stops.current, x))),
   }));
 
-  // public API
-  const skip = React.useCallback(
-    (/** @type {number} */ n = 0) => {
-      const current = findClosestMatch(stops.current, x.get());
-      const index = stops.current.indexOf(current);
-      const nextIndex = R.clamp(0, stops.current.length - 1, index + n);
-      set({ x: stops.current[nextIndex], immediate: false });
-    },
-    [x, set]
-  );
-
-  const goTo = React.useCallback(
-    (/** @type {number} */ index) => {
-      const nextIndex = R.clamp(0, stops.current.length - 1, index);
-      const nextX = stops.current[nextIndex];
-      set({ x: nextX, immediate: false });
-    },
-    [set]
-  );
-
   const strItems = JSON.stringify(items);
   const value = React.useMemo(() => {
     return {
       x,
       set,
       stops,
-      skip,
-      goTo,
       index,
       items: JSON.parse(strItems),
       setItems,
     };
-  }, [x, set, skip, goTo, index, strItems, setItems]);
+  }, [x, set, index, strItems, setItems]);
 
   return (
     <KaruseruContext.Provider value={value}>
@@ -176,13 +154,18 @@ function KaruseruItem({ isActive, ...props }) {
 }
 
 function KaruseruNext(props) {
-  const { skip, items, index } = React.useContext(KaruseruContext);
+  const { stops, set, items, index } = React.useContext(KaruseruContext);
+
+  const next = React.useCallback(() => {
+    const nextIndex = R.clamp(0, stops.current.length - 1, index + 1);
+    set({ x: stops.current[nextIndex], immediate: false });
+  }, [set, stops, index]);
 
   return (
     <button
       disabled={index >= items.length - 1}
       data-karuseru-button-next=""
-      onClick={callAll(() => skip(1), props.onClick)}
+      onClick={callAll(next, props.onClick)}
       {...props}
     />
   );
@@ -192,13 +175,18 @@ KaruseruNext.defaultProps = {
 };
 
 function KaruseruPrev(props) {
-  const { skip, index } = React.useContext(KaruseruContext);
+  const { stops, set, index } = React.useContext(KaruseruContext);
+
+  const prev = React.useCallback(() => {
+    const nextIndex = R.clamp(0, stops.current.length - 1, index - 1);
+    set({ x: stops.current[nextIndex], immediate: false });
+  }, [set, stops, index]);
 
   return (
     <button
       disabled={index <= 0}
       data-karuseru-button-prev=""
-      onClick={callAll(() => skip(-1), props.onClick)}
+      onClick={callAll(prev, props.onClick)}
       {...props}
     />
   );
@@ -208,18 +196,20 @@ KaruseruPrev.defaultProps = {
 };
 
 function KaruseruNav(props) {
-  const { items, index, goTo } = React.useContext(KaruseruContext);
+  const { items, index, set } = React.useContext(KaruseruContext);
+
+  const goTo = React.useCallback(stop => set({ x: stop }), [set]);
 
   return (
     <div data-karuseru-nav="" {...props}>
-      {items.map((_, i) => {
+      {items.map((stop, i) => {
         const attr = Object.assign(
           { "data-karuseru-nav-item": "" },
           index === i ? { "data-karuseru-nav-item-active": "" } : {}
         );
 
         return (
-          <button key={i} {...attr} onClick={() => goTo(i)}>
+          <button key={i} {...attr} onClick={() => goTo(stop)}>
             {i}
           </button>
         );
