@@ -1,3 +1,4 @@
+// @ts-check
 import "styled-components/macro";
 import React from "react";
 
@@ -8,17 +9,32 @@ const slides = ["first", "second", "third"];
 
 function App() {
   const [state, setState] = React.useState(slides);
+
   const [align, setAlign] = React.useState("center");
+  const onChange = React.useCallback(evt => setAlign(evt.target.value), []);
+
+  const [contain, setContain] = React.useState(false);
+  const onToggle = React.useCallback(() => setContain(prev => !prev), []);
+
   return (
     <React.Fragment>
       <button onClick={() => setState(slides.concat("forth"))}>
         add forth
       </button>
-      <select value={align} onChange={evt => setAlign(evt.target.value)}>
+      <select value={align} onChange={onChange}>
         <option value="left">left</option>
         <option value="center">center</option>
         <option value="right">right</option>
       </select>
+      <label htmlFor="contain">
+        <input
+          id="contain"
+          type="checkbox"
+          checked={contain}
+          onChange={onToggle}
+        />
+        Contain
+      </label>
       <div
         style={{
           width: "100%",
@@ -28,7 +44,7 @@ function App() {
         }}
       >
         <Karuseru>
-          <Karuseru.Items align={align}>
+          <Karuseru.Items align={align} contain={contain}>
             {state.map(msg => (
               <Karuseru.Item
                 key={msg}

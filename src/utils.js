@@ -18,13 +18,26 @@ function rubberBandIfOutOfBounds(min, max, value) {
 
 /**
  * @param {HTMLElement} el
- * @param {"left" | "right" | "center"} align
+ * @param {object} options
+ * @param {"left" | "right" | "center"} options.align
+ * @param {boolean} options.contain
  */
-function makeStops(el, align) {
+function makeStops(el, options) {
+  const { align, contain } = options;
   const containerWidth = el.offsetWidth;
-  return Array.from(el.children, (/** @type {HTMLElement} */ child) => {
+  let stops = Array.from(el.children, (/** @type {HTMLElement} */ child) => {
     return makeStop(child.offsetLeft, child.offsetWidth, containerWidth, align);
   });
+
+  if (contain) {
+    const max = 0;
+    // @ts-ignore
+    const { offsetLeft: offset, offsetWidth: width } = el.lastChild;
+    const min = -(Math.abs(offset) + width - containerWidth);
+    stops = stops.map(stop => Math.max(min, Math.min(stop, max)));
+  }
+
+  return stops;
 }
 
 function makeStop(offset, width, containerWidth, align) {

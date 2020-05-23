@@ -99,7 +99,7 @@ function useSize(ref) {
   return size;
 }
 
-function Items({ children, align, ...props }) {
+function Items({ children, align, contain, ...props }) {
   const { x, set, index, stops, setItems } = React.useContext(KaruseruContext);
 
   /** @type {React.RefObject<HTMLUListElement>} */
@@ -112,13 +112,13 @@ function Items({ children, align, ...props }) {
     set().then(() => {
       setItems(prevItems => {
         // use prevItems to maintain same index
-        const nextItems = makeStops(ref.current, align);
+        const nextItems = makeStops(ref.current, { align, contain });
         const nextX = findClosestMatch(nextItems, x.get());
         set({ x: nextX, immediate: false });
         return nextItems;
       });
     });
-  }, [x, set, setItems, align, children, width]);
+  }, [x, set, setItems, align, contain, children, width]);
 
   const bind = useDrag(
     ({ last: isLast, movement: [movementX], vxvy: [velocityX], memo }) => {
@@ -166,6 +166,7 @@ function Items({ children, align, ...props }) {
 }
 Items.defaultProps = {
   align: "center",
+  contain: true,
 };
 
 function Item({ isActive, ...props }) {
@@ -173,7 +174,7 @@ function Item({ isActive, ...props }) {
     { "data-karuseru-item": "" },
     isActive ? { "data-karuseru-item-active": "" } : {}
   );
-  return <li {...attr} {...props} />;
+  return <li {...props} {...attr} />;
 }
 
 function Next(props) {
@@ -182,6 +183,7 @@ function Next(props) {
   return (
     <button
       disabled={index >= items.length - 1}
+      data-karuseru-button-next=""
       onClick={callAll(() => skip(1), props.onClick)}
       {...props}
     />
@@ -197,6 +199,7 @@ function Prev(props) {
   return (
     <button
       disabled={index <= 0}
+      data-karuseru-button-prev=""
       onClick={callAll(() => skip(-1), props.onClick)}
       {...props}
     />
@@ -210,15 +213,15 @@ function Nav(props) {
   const { items, index, goTo } = React.useContext(KaruseruContext);
 
   return (
-    <div {...props}>
-      {items.map((stop, i) => {
+    <div data-karuseru-nav="" {...props}>
+      {items.map((_, i) => {
         const attr = Object.assign(
           { "data-karuseru-nav-item": "" },
           index === i ? { "data-karuseru-nav-item-active": "" } : {}
         );
 
         return (
-          <button key={stop} {...attr} onClick={() => goTo(i)}>
+          <button key={i} {...attr} onClick={() => goTo(i)}>
             {i}
           </button>
         );
