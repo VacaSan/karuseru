@@ -31,31 +31,33 @@ const R = {
 const KaruseruContext = React.createContext(undefined);
 
 function Karuseru({ children }) {
-  const [items, setItems] = React.useState([0]);
-  const stops = React.useRef(items);
-  stops.current = items;
+  const [stops, setStops] = React.useState([0]);
+  const stopsRef = React.useRef(stops);
+  stopsRef.current = stops;
 
-  const [index, setIndex] = React.useState(0);
+  const [activeIndex, setActiveIndex] = React.useState(0);
 
   const [{ x }, set] = useSpring(() => ({
     x: 0,
     // cannot use state<stops> because onChange probably gets wrapped in
     // useCallback, we need to use "live" collection, like ref
     onChange: x =>
-      setIndex(stops.current.indexOf(findClosestMatch(stops.current, x))),
+      setActiveIndex(
+        stopsRef.current.indexOf(findClosestMatch(stopsRef.current, x))
+      ),
   }));
 
-  const strItems = JSON.stringify(items);
+  const strStops = JSON.stringify(stops);
   const value = React.useMemo(() => {
     return {
       x,
       set,
-      stops,
-      index,
-      items: JSON.parse(strItems),
-      setItems,
+      stops: JSON.parse(strStops),
+      stopsRef,
+      setStops,
+      activeIndex,
     };
-  }, [x, set, index, strItems, setItems]);
+  }, [x, set, activeIndex, strStops, setStops]);
 
   return (
     <KaruseruContext.Provider value={value}>
@@ -78,7 +80,9 @@ function useSize(ref) {
 }
 
 function KaruseruItems({ children, align, contain, ...props }) {
-  const { x, set, index, stops, setItems } = React.useContext(KaruseruContext);
+  const { x, set, activeIndex, stopsRef, setStops } = React.useContext(
+    KaruseruContext
+  );
 
   /** @type {React.RefObject<HTMLUListElement>} */
   const ref = React.useRef(null);
@@ -86,14 +90,14 @@ function KaruseruItems({ children, align, contain, ...props }) {
   const { width } = useSize(ref);
 
   React.useLayoutEffect(() => {
-    setItems(prevItems => {
+    setStops(prevItems => {
       // TODO use prevItems to maintain same index
       const nextItems = makeStops(ref.current, { align, contain });
       const nextX = findClosestMatch(nextItems, x.get());
       set({ x: nextX, immediate: false });
       return nextItems;
     });
-  }, [x, set, setItems, align, contain, children, width]);
+  }, [x, set, setStops, align, contain, children, width]);
 
   const bind = useDrag(
     ({ last: isLast, movement: [movementX], vxvy: [velocityX], memo }) => {
@@ -104,11 +108,11 @@ function KaruseruItems({ children, align, contain, ...props }) {
       let newX;
       if (isLast) {
         const projectedX = x.get() + projection(velocityX, 0.99);
-        newX = findClosestMatch(stops.current, projectedX);
+        newX = findClosestMatch(stopsRef.current, projectedX);
       } else {
         newX = rubberBandIfOutOfBounds(
-          R.last(stops.current),
-          R.first(stops.current),
+          R.last(stopsRef.current),
+          R.first(stopsRef.current),
           memo + movementX
         );
       }
@@ -119,9 +123,9 @@ function KaruseruItems({ children, align, contain, ...props }) {
     }
   );
 
-  const items = React.Children.map(children, (child, i) =>
+  const items = React.Children.map(children, (child, index) =>
     React.cloneElement(child, {
-      isActive: i === index,
+      isActive: index === activeIndex,
     })
   );
 
@@ -154,16 +158,18 @@ function KaruseruItem({ isActive, ...props }) {
 }
 
 function KaruseruNext(props) {
-  const { stops, set, items, index } = React.useContext(KaruseruContext);
+  const { stopsRef, set, stops, activeIndex } = React.useContext(
+    KaruseruContext
+  );
 
   const next = React.useCallback(() => {
-    const nextIndex = R.clamp(0, stops.current.length - 1, index + 1);
-    set({ x: stops.current[nextIndex], immediate: false });
-  }, [set, stops, index]);
+    const nextIndex = R.clamp(0, stopsRef.current.length - 1, activeIndex + 1);
+    set({ x: stopsRef.current[nextIndex], immediate: false });
+  }, [set, stopsRef, activeIndex]);
 
   return (
     <button
-      disabled={index >= items.length - 1}
+      disabled={activeIndex >= stops.length - 1}
       data-karuseru-button-next=""
       onClick={callAll(next, props.onClick)}
       {...props}
@@ -175,16 +181,16 @@ KaruseruNext.defaultProps = {
 };
 
 function KaruseruPrev(props) {
-  const { stops, set, index } = React.useContext(KaruseruContext);
+  const { stopsRef, set, activeIndex } = React.useContext(KaruseruContext);
 
   const prev = React.useCallback(() => {
-    const nextIndex = R.clamp(0, stops.current.length - 1, index - 1);
-    set({ x: stops.current[nextIndex], immediate: false });
-  }, [set, stops, index]);
+    const nextIndex = R.clamp(0, stopsRef.current.length - 1, activeIndex - 1);
+    set({ x: stopsRef.current[nextIndex], immediate: false });
+  }, [set, stopsRef, activeIndex]);
 
   return (
     <button
-      disabled={index <= 0}
+      disabled={activeIndex <= 0}
       data-karuseru-button-prev=""
       onClick={callAll(prev, props.onClick)}
       {...props}
@@ -196,13 +202,13 @@ KaruseruPrev.defaultProps = {
 };
 
 function KaruseruNav({ render, ...props }) {
-  const { items, index: activeIndex, set } = React.useContext(KaruseruContext);
+  const { stops, activeIndex, set } = React.useContext(KaruseruContext);
 
   const goTo = React.useCallback(stop => set({ x: stop }), [set]);
 
   return (
     <div data-karuseru-nav="" {...props}>
-      {items.map((stop, index) => {
+      {stops.map((stop, index) => {
         return (
           <React.Fragment key={index}>
             {render({
