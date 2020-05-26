@@ -144,7 +144,7 @@ KaruseruItems.defaultProps = {
   contain: true,
 };
 
-// do I need this component?
+// copy react-router's NavLink api (e.g. activeClassName)
 function KaruseruItem({ isActive, ...props }) {
   const attr = Object.assign(
     { "data-karuseru-item": "" },
@@ -195,28 +195,36 @@ KaruseruPrev.defaultProps = {
   children: "prev",
 };
 
-function KaruseruNav(props) {
-  const { items, index, set } = React.useContext(KaruseruContext);
+function KaruseruNav({ render, ...props }) {
+  const { items, index: activeIndex, set } = React.useContext(KaruseruContext);
 
   const goTo = React.useCallback(stop => set({ x: stop }), [set]);
 
   return (
     <div data-karuseru-nav="" {...props}>
-      {items.map((stop, i) => {
-        const attr = Object.assign(
-          { "data-karuseru-nav-item": "" },
-          index === i ? { "data-karuseru-nav-item-active": "" } : {}
-        );
-
+      {items.map((stop, index) => {
         return (
-          <button key={i} {...attr} onClick={() => goTo(stop)}>
-            {i}
-          </button>
+          <React.Fragment key={index}>
+            {render({
+              index,
+              activeIndex,
+              onClick: () => goTo(stop), // maybe re-name?
+              "data-karuseru-nav-item": "",
+              ...(activeIndex === index
+                ? { "data-karuseru-nav-item-active": "" }
+                : {}),
+            })}
+          </React.Fragment>
         );
       })}
     </div>
   );
 }
+KaruseruNav.defaultProps = {
+  render: ({ index, activeIndex: _, ...props }) => (
+    <button {...props}>{index}</button>
+  ),
+};
 
 export {
   Karuseru,
