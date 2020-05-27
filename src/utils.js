@@ -1,4 +1,21 @@
+import React from "react";
+import useResizeObserver from "use-resize-observer";
+import debounce from "lodash.debounce";
+
 const callAll = (...fns) => (...args) => fns.forEach(fn => fn && fn(...args));
+
+/** @param {any[]} list */
+const first = list => list[0];
+
+/** @param {any[]} list */
+const last = list => list[list.length - 1];
+
+/**
+ * @param {number} min
+ * @param {number} max
+ * @param {number} value
+ */
+const clamp = (min, max, value) => Math.max(min, Math.min(value, max));
 
 // https://mobile-first-animation.netlify.app/26
 const projection = (initialVelocity, decelerationRate) =>
@@ -64,11 +81,31 @@ function findClosestMatch(stops, x) {
   });
 }
 
+/**
+ * @param {React.RefObject<HTMLElement>} ref
+ */
+function useSize(ref) {
+  const [size, setSize] = React.useState({ width: 0, height: 0 });
+
+  const onResize = React.useMemo(
+    () => debounce(setSize, 500, { leading: false }),
+    []
+  );
+
+  useResizeObserver({ ref, onResize });
+
+  return size;
+}
+
 export {
+  first,
+  last,
+  clamp,
   callAll,
   makeStop,
   makeStops,
   projection,
   findClosestMatch,
   rubberBandIfOutOfBounds,
+  useSize,
 };

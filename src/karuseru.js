@@ -1,32 +1,19 @@
 import "./styles.css";
 import React from "react";
 import {
+  first,
+  last,
+  clamp,
   callAll,
   makeStops,
   projection,
   findClosestMatch,
   rubberBandIfOutOfBounds,
+  useSize,
 } from "./utils";
 
 import { animated, useSpring } from "react-spring";
 import { useDrag } from "react-use-gesture";
-
-import useResizeObserver from "use-resize-observer";
-import debounce from "lodash.debounce";
-
-// utils (Ramda stuff)
-const R = {
-  /** @param {any[]} list */
-  first: list => list[0],
-  /** @param {any[]} list */
-  last: list => list[list.length - 1],
-  /**
-   * @param {number} min
-   * @param {number} max
-   * @param {number} value
-   */
-  clamp: (min, max, value) => Math.max(min, Math.min(value, max)),
-};
 
 const KaruseruContext = React.createContext(undefined);
 
@@ -66,19 +53,6 @@ function Karuseru({ children }) {
   );
 }
 
-function useSize(ref) {
-  const [size, setSize] = React.useState({ width: 0, height: 0 });
-
-  const onResize = React.useMemo(
-    () => debounce(setSize, 500, { leading: false }),
-    []
-  );
-
-  useResizeObserver({ ref, onResize });
-
-  return size;
-}
-
 function KaruseruItems({ children, align, contain, ...props }) {
   const { x, set, activeIndex, stopsRef, setStops } = React.useContext(
     KaruseruContext
@@ -111,8 +85,8 @@ function KaruseruItems({ children, align, contain, ...props }) {
         newX = findClosestMatch(stopsRef.current, projectedX);
       } else {
         newX = rubberBandIfOutOfBounds(
-          R.last(stopsRef.current),
-          R.first(stopsRef.current),
+          last(stopsRef.current),
+          first(stopsRef.current),
           memo + movementX
         );
       }
@@ -163,7 +137,7 @@ function KaruseruNext(props) {
   );
 
   const next = React.useCallback(() => {
-    const nextIndex = R.clamp(0, stopsRef.current.length - 1, activeIndex + 1);
+    const nextIndex = clamp(0, stopsRef.current.length - 1, activeIndex + 1);
     set({ x: stopsRef.current[nextIndex], immediate: false });
   }, [set, stopsRef, activeIndex]);
 
@@ -184,7 +158,7 @@ function KaruseruPrev(props) {
   const { stopsRef, set, activeIndex } = React.useContext(KaruseruContext);
 
   const prev = React.useCallback(() => {
-    const nextIndex = R.clamp(0, stopsRef.current.length - 1, activeIndex - 1);
+    const nextIndex = clamp(0, stopsRef.current.length - 1, activeIndex - 1);
     set({ x: stopsRef.current[nextIndex], immediate: false });
   }, [set, stopsRef, activeIndex]);
 
