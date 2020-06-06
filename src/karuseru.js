@@ -181,7 +181,7 @@ KaruseruPrev.defaultProps = {
   children: "prev",
 };
 
-function KaruseruNav({ render, ...props }) {
+function KaruseruNav({ renderItem, ...props }) {
   const { stops, activeIndex, set } = React.useContext(KaruseruContext);
 
   const goTo = React.useCallback(stop => set({ x: stop }), [set]);
@@ -193,7 +193,7 @@ function KaruseruNav({ render, ...props }) {
 
         return (
           <React.Fragment key={index}>
-            {render({
+            {renderItem({
               index,
               activeIndex,
               onClick: () => goTo(stop), // maybe re-name?
@@ -209,7 +209,7 @@ function KaruseruNav({ render, ...props }) {
   );
 }
 KaruseruNav.defaultProps = {
-  render: ({ index, activeIndex: _, ...props }) => (
+  renderItem: ({ index, activeIndex: _, ...props }) => (
     <button {...props}>{index}</button>
   ),
 };

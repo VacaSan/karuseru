@@ -9,12 +9,12 @@
 - [Installations](#Installation)
 - [Usage](#Usage)
 - [Components](#Components)
-  - [&lt;Karuseru /&gt;](#Karuseru-)
-  - [&lt;KaruseruItems /&gt;](#KaruseruItems-)
-  - [&lt;KaruseruItem /&gt;](#KaruseruItem-)
-  - [&lt;KaruseruNext /&gt;](#KaruseruNext-)
-  - [&lt;KaruseruPrev /&gt;](#KaruseruPrev-)
-  - [&lt;KaruseruNav /&gt;](#KaruseruNav-)
+  - [Karuseru](#Karuseru)
+  - [KaruseruItems](#KaruseruItems)
+  - [KaruseruItem](#KaruseruItem)
+  - [KaruseruNext](#KaruseruNext)
+  - [KaruseruPrev](#KaruseruPrev)
+  - [KaruseruNav](#KaruseruNav)
 - [Styling](#Styling)
 - [License](#License)
 
@@ -47,25 +47,31 @@ render(
 
 Any props not listed below will be spread onto the underlying element.
 
-## &lt;Karuseru />
+## Karuseru
 
 // TODO
 
-## &lt;KaruseruItems />
+## KaruseruItems
 
 Renders a `ul` element. Must be rendered inside of a `<Karuseru>`.
 
 ### Props
 
-#### `children: React.ReactNode`
+#### children
+
+> `React.ReactNode` | _required_
 
 Can contain only `KaruseruItem`
 
-#### `align?: ("left" | "right" | "center") = "center"`
+#### align
+
+> `("left" | "right" | "center")` | defaults to: `"center"`
 
 Align items within the carousel element.
 
-#### `contain?: boolean = false`
+#### contain
+
+> `boolean` | defaults to: `false`
 
 Contains items to carousel element to prevent excess scroll at beginning or end.
 
@@ -73,13 +79,15 @@ Contains items to carousel element to prevent excess scroll at beginning or end.
 
 // TODO
 
-## &lt;KaruseruItem />
+## KaruseruItem
 
 Renders a `li` element.
 
-// TODO
+### Props
 
-## &lt;KaruseruNext />
+Any props will be spread onto the underlying `li` element. You can treat it like any other `li` in your app for styling.
+
+## KaruseruNext
 
 Wraps a `DOM button`, that when clicked goes to the next slide. Must be rendered inside of a `<Karuseru>`.
 
@@ -110,7 +118,7 @@ If you'd like to target when the button is disabled use disabled attribute:
 }
 ```
 
-## &lt;KaruseruPrev />
+## KaruseruPrev
 
 Wraps a `DOM button`, that when clicked goes to the previous slide. Must be rendered inside of a `<Karuseru>`.
 
@@ -139,24 +147,15 @@ If you'd like to target when the button is disabled use disabled attribute:
 }
 ```
 
-## &lt;KaruseruNav />
+## KaruseruNav
 
 Renders a list of `buttons`, that when clicked goes to the specific slide.
 
 ### Props
 
-#### `div props`
+#### renderItem
 
-Any props not listed here will be spread onto the underlying `div` element. You can treat it like any other `div` in your app for styling.
-
-```jsx
-<Karuseru>
-  {/* ... */}
-  <KaruseruNav className="dots" style={{ border: "2px solid hotpink" }} />
-</Karuseru>
-```
-
-#### `render?: ({ index: number, activeIndex: number, onClick: () => void }): JSX.Element`
+> `({ index: number, activeIndex: number, onClick: () => void }): JSX.Element`
 
 Lets you override the default `button` element.
 
@@ -164,12 +163,23 @@ Lets you override the default `button` element.
 <Karuseru>
   {/* ... */}
   <KaruseruNav
-    render={({ index, activeIndex, onClick }) => (
+    renderItem={({ index, activeIndex, onClick }) => (
       <button onClick={onClick} disabled={index === activeIndex}>
         No.{index}
       </button>
     )}
   />
+</Karuseru>
+```
+
+#### div props
+
+Any props not listed here will be spread onto the underlying `div` element. You can treat it like any other `div` in your app for styling.
+
+```jsx
+<Karuseru>
+  {/* ... */}
+  <KaruseruNav className="dots" style={{ border: "2px solid hotpink" }} />
 </Karuseru>
 ```
 
