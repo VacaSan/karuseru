@@ -4,6 +4,9 @@ import debounce from "lodash.debounce";
 
 const callAll = (...fns) => (...args) => fns.forEach(fn => fn && fn(...args));
 
+const attr = (...args) =>
+  args.reduce((acc, cur) => (cur ? { ...acc, ...cur } : acc), {});
+
 /** @param {any[]} list */
 const first = list => list[0];
 
@@ -100,6 +103,7 @@ function useSize(ref) {
 }
 
 export {
+  attr,
   first,
   last,
   clamp,

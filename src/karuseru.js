@@ -1,6 +1,7 @@
 import "./styles.css";
 import React from "react";
 import {
+  attr,
   first,
   last,
   clamp,
@@ -125,12 +126,15 @@ KaruseruItems.defaultProps = {
 function KaruseruItem({ index, activeIndex, ...props }) {
   const isActive = index === activeIndex;
 
-  const attr = Object.assign(
-    { "data-karuseru-item": "" },
-    isActive ? { "data-karuseru-item-active": "" } : {}
+  return (
+    <li
+      {...props}
+      {...attr(
+        { "data-karuseru-item": "" },
+        isActive && { "data-karuseru-item-active": "" }
+      )}
+    />
   );
-
-  return <li {...props} {...attr} />;
 }
 
 function KaruseruNext(props) {
@@ -177,8 +181,6 @@ KaruseruPrev.defaultProps = {
   children: "prev",
 };
 
-// hmm, I'm not sure about render props thing...
-// maybe let user have full control of render
 function KaruseruNav({ render, ...props }) {
   const { stops, activeIndex, set } = React.useContext(KaruseruContext);
 
@@ -187,16 +189,18 @@ function KaruseruNav({ render, ...props }) {
   return (
     <div data-karuseru-nav="" {...props}>
       {stops.map((stop, index) => {
+        const isActive = activeIndex === index;
+
         return (
           <React.Fragment key={index}>
             {render({
               index,
               activeIndex,
               onClick: () => goTo(stop), // maybe re-name?
-              "data-karuseru-nav-item": "",
-              ...(activeIndex === index
-                ? { "data-karuseru-nav-item-active": "" }
-                : {}),
+              ...attr(
+                { "data-karuseru-nav-item": "" },
+                isActive && { "data-karuseru-nav-item-active": "" }
+              ),
             })}
           </React.Fragment>
         );
