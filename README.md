@@ -65,7 +65,7 @@ Can contain only `KaruseruItem`
 
 Align items within the carousel element.
 
-#### `contain?: (boolean) = false`
+#### `contain?: boolean = false`
 
 Contains items to carousel element to prevent excess scroll at beginning or end.
 

@@ -52,6 +52,8 @@ function makeStops(el, options) {
     const { offsetLeft: offset, offsetWidth: width } = el.lastChild;
     const min = -(Math.abs(offset) + width - containerWidth);
     stops = stops.map(stop => Math.max(min, Math.min(stop, max)));
+    // remove duplicate entries
+    stops = Array.from(new Set(stops));
   }
 
   return stops;

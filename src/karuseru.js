@@ -53,6 +53,7 @@ function Karuseru({ children }) {
   );
 }
 
+// TODO https://www.w3.org/TR/wai-aria-practices/#carousel
 function KaruseruItems({ children, align, contain, ...props }) {
   const { x, set, activeIndex, stopsRef, setStops } = React.useContext(
     KaruseruContext
@@ -97,10 +98,9 @@ function KaruseruItems({ children, align, contain, ...props }) {
     }
   );
 
+  // keep an eye on this -> https://github.com/reach/reach-ui/tree/master/packages/descendants
   const items = React.Children.map(children, (child, index) =>
-    React.cloneElement(child, {
-      isActive: index === activeIndex,
-    })
+    React.cloneElement(child, { index, activeIndex })
   );
 
   return (
@@ -122,12 +122,14 @@ KaruseruItems.defaultProps = {
   contain: true,
 };
 
-// copy react-router's NavLink api (e.g. activeClassName)
-function KaruseruItem({ isActive, ...props }) {
+function KaruseruItem({ index, activeIndex, ...props }) {
+  const isActive = index === activeIndex;
+
   const attr = Object.assign(
     { "data-karuseru-item": "" },
     isActive ? { "data-karuseru-item-active": "" } : {}
   );
+
   return <li {...props} {...attr} />;
 }
 
@@ -145,8 +147,8 @@ function KaruseruNext(props) {
     <button
       disabled={activeIndex >= stops.length - 1}
       data-karuseru-button-next=""
-      onClick={callAll(next, props.onClick)}
       {...props}
+      onClick={callAll(next, props.onClick)}
     />
   );
 }
@@ -166,8 +168,8 @@ function KaruseruPrev(props) {
     <button
       disabled={activeIndex <= 0}
       data-karuseru-button-prev=""
-      onClick={callAll(prev, props.onClick)}
       {...props}
+      onClick={callAll(prev, props.onClick)}
     />
   );
 }
@@ -175,6 +177,8 @@ KaruseruPrev.defaultProps = {
   children: "prev",
 };
 
+// hmm, I'm not sure about render props thing...
+// maybe let user have full control of render
 function KaruseruNav({ render, ...props }) {
   const { stops, activeIndex, set } = React.useContext(KaruseruContext);
 
